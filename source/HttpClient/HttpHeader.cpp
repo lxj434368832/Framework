@@ -1,0 +1,247 @@
+#include "../../include/HttpClient/HttpHeader.h"
+#include "../../include/base64/base64.h"
+#include "../../include/hmac_sha1/hmac_sha1.h"
+#include <combaseapi.h>
+#include <sstream>
+#include <time.h>
+#include <iostream>
+#include <stdio.h> 
+#include <locale.h>
+#include <sys/timeb.h>    
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+
+#pragma comment(lib,"Ole32.lib")
+
+bool GetMacByGetAdaptersInfo(std::string& macOUT)
+{
+	bool ret = false;
+
+	ULONG ulOutBufLen = sizeof(IP_ADAPTER_INFO);
+	PIP_ADAPTER_INFO pAdapterInfo = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
+	if (pAdapterInfo == NULL)
+		return false;
+	// Make an initial call to GetAdaptersInfo to get the necessary size into the ulOutBufLen variable
+	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW)
+	{
+		free(pAdapterInfo);
+		pAdapterInfo = (IP_ADAPTER_INFO *)malloc(ulOutBufLen);
+		if (pAdapterInfo == NULL)
+			return false;
+	}
+
+	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == NO_ERROR)
+	{
+		for (PIP_ADAPTER_INFO pAdapter = pAdapterInfo; pAdapter != NULL; pAdapter = pAdapter->Next)
+		{
+			// 确保是以太网
+			if (pAdapter->Type != MIB_IF_TYPE_ETHERNET)
+				continue;
+			// 确保MAC地址的长度为 00-00-00-00-00-00
+			if (pAdapter->AddressLength != 6)
+				continue;
+			char acMAC[32];
+			sprintf_s(acMAC, "%02X-%02X-%02X-%02X-%02X-%02X",
+				int(pAdapter->Address[0]),
+				int(pAdapter->Address[1]),
+				int(pAdapter->Address[2]),
+				int(pAdapter->Address[3]),
+				int(pAdapter->Address[4]),
+				int(pAdapter->Address[5]));
+			macOUT = acMAC;
+			ret = true;
+			break;
+		}
+	}
+
+	free(pAdapterInfo);
+	return ret;
+}
+
+bool GetMacByGetAdaptersAddresses(std::string& macOUT)
+{
+	bool ret = false;
+
+	ULONG outBufLen = sizeof(IP_ADAPTER_ADDRESSES);
+	PIP_ADAPTER_ADDRESSES pAddresses = (IP_ADAPTER_ADDRESSES*)malloc(outBufLen);
+	if (pAddresses == NULL)
+		return false;
+	// Make an initial call to GetAdaptersAddresses to get the necessary size into the ulOutBufLen variable
+	if (GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAddresses, &outBufLen) == ERROR_BUFFER_OVERFLOW)
+	{
+		free(pAddresses);
+		pAddresses = (IP_ADAPTER_ADDRESSES*)malloc(outBufLen);
+		if (pAddresses == NULL)
+			return false;
+	}
+
+	if (GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAddresses, &outBufLen) == NO_ERROR)
+	{
+		// If successful, output some information from the data we received
+		for (PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses; pCurrAddresses != NULL; pCurrAddresses = pCurrAddresses->Next)
+		{
+			// 确保MAC地址的长度为 00-00-00-00-00-00
+			if (pCurrAddresses->PhysicalAddressLength != 6)
+				continue;
+			char acMAC[32];
+			sprintf_s(acMAC, "%02X-%02X-%02X-%02X-%02X-%02X",
+				int(pCurrAddresses->PhysicalAddress[0]),
+				int(pCurrAddresses->PhysicalAddress[1]),
+				int(pCurrAddresses->PhysicalAddress[2]),
+				int(pCurrAddresses->PhysicalAddress[3]),
+				int(pCurrAddresses->PhysicalAddress[4]),
+				int(pCurrAddresses->PhysicalAddress[5]));
+			macOUT = acMAC;
+			ret = true;
+			break;
+		}
+	}
+
+	free(pAddresses);
+	return ret;
+}
+
+http_request_header::http_request_header(HTTP_METHOD method, unsigned int content_length, const string& access_key_id, const string& access_key_secret, const string& user_id)
+	:m_verb(get_verb(method))
+	,m_accept(HEADER_ACCEPT_VALUE)
+	,m_accept_encoding(HEADER_ACCEPT_ENCODING_VALUE)
+	,m_content_type(HEADER_CONTENT_TYPE_VALUE)
+	,m_accept_language(HEADER_ACCEPT_LANGUAGE_VALUE)
+	,m_access_key_id(access_key_id)
+	,m_access_key_secret(access_key_secret)
+    ,m_user_id(user_id)
+{
+	m_msg_ident = make_guid();
+	m_sign_date = make_sign_date();
+	m_authorization  = make_authorization();
+	m_content_length = make_content_length(content_length);
+}
+
+
+void http_request_header::auto_build_header()
+{
+	add_header_item(HEADER_ACCEPT, m_accept);
+	add_header_item(HEADER_ACCEPT_ENCODING, m_accept_encoding);
+	add_header_item(HEADER_ACCEPT_LANGUAGE, m_accept_language);
+	add_header_item(HEADER_AUTHORIZATION, m_authorization);
+	add_header_item(HEADER_SIGN_DATE, m_sign_date);
+    add_header_item(HEADER_OPERATOR, m_user_id);
+	add_header_item(HEADER_CONTENT_LENGTH, m_content_length);
+	add_header_item(HEADER_CONTENT_TYPE, m_content_type);
+	add_header_item(HEADER_MSG_IDENT, m_msg_ident);
+}
+
+std::map<std::string, std::string>& http_request_header::GetHttpHead()
+{
+	auto_build_header();
+	return m_headers;
+}
+
+string http_request_header::get_verb(HTTP_METHOD method)
+{
+	switch (method)
+	{
+	case  HTTP_METHOD_POST:return HTTP_METHOD_POST_STR;
+	case  HTTP_METHOD_PUT:return HTTP_METHOD_PUT_STR;
+	case  HTTP_METHOD_PATCH:return HTTP_METHOD_PATCH_STR;
+	case  HTTP_METHOD_GET:return HTTP_METHOD_GET_STR;
+	case  HTTP_METHOD_DELETE:return HTTP_METHOD_DELETE_STR;
+	case  HTTP_METHOD_HEAD:return HTTP_METHOD_HEAD_STR;
+	case  HTTP_METHOD_TRACE:return HTTP_METHOD_TRACE_STR;
+	case  HTTP_METHOD_OPTIONS:return HTTP_METHOD_OPTIONS_STR;
+	case  HTTP_METHOD_CONNECT:return HTTP_METHOD_CONNECT_STR;
+	default:
+		break;
+	}
+	return HTTP_METHOD_POST_STR;
+}
+
+void http_request_header::add_header_item(string name, string value)
+{
+	m_headers.emplace(std::make_pair(name, value));
+}
+
+static std::string byte2hex(const char *str,int len)
+{
+	//assert(str);
+	std::string stmp;
+	char strTmp[10];
+	for (int n = 0; n < len; n++)
+	{
+		sprintf_s(strTmp, "%02X", str[n] & 0XFF);
+		stmp.append(strTmp);
+	}
+	return stmp;
+}
+
+//base64(hmac-sha1(AccessKeySecret,VERB  + "\n" + Content-Type + "\n" + SignDate+“\n”+ msg_ident)
+string http_request_header::make_authorization()
+{
+	//打包加密数据体
+	std::ostringstream ostr;
+	ostr << m_verb
+		<< TAB_ITEM
+		<< m_content_type
+		<< TAB_ITEM
+		<< m_sign_date
+		<< TAB_ITEM
+		<< m_msg_ident;
+	
+	string plaintext = ostr.str();
+	const char *str = NULL, *str1 = NULL;
+	//生成数字签名Signature
+	unsigned char digest[1024] = {0};
+	hmac_sha1((unsigned char*)m_access_key_secret.c_str(), m_access_key_secret.size(), (unsigned char*)plaintext.c_str(), plaintext.size(), digest);
+	string base64in((char*)digest, 20);
+	//base64in = byte2hex(base64in.c_str(), base64in.size());
+
+	string signature;
+	Base64::Encode(base64in, &signature);
+
+	string authorization;
+	authorization.append("RCSSS ");
+	authorization.append(m_access_key_id);
+	authorization.append(":");
+	authorization.append(signature);
+
+	std::cout << "datetime:" << m_sign_date <<" identify:"<< m_msg_ident << 
+		" authorization:" << authorization << std::endl;
+	return authorization;
+}
+
+std::string http_request_header::make_guid()
+{
+	char buf[64] = { 0 };
+	GUID guid;
+	if (S_OK == ::CoCreateGuid(&guid))
+	{
+		sprintf_s(buf, sizeof(buf)
+			, "%08X-%04X-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X"
+			, guid.Data1
+			, guid.Data2
+			, guid.Data3
+			, guid.Data4[0], guid.Data4[1]
+			, guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5]
+			, guid.Data4[6], guid.Data4[7]
+		);
+	}
+	return string(buf);
+}
+
+std::string http_request_header::make_sign_date()
+{
+	std::ostringstream ostr;
+	timeb tmb;
+	ftime(&tmb);
+
+	ostr << tmb.time * 1000 + tmb.millitm;
+	m_sign_date = ostr.str();
+	return ostr.str();
+}
+
+std::string http_request_header::make_content_length(unsigned int content_length)
+{
+	std::ostringstream ostr;
+	ostr << content_length;
+	return ostr.str();
+}
