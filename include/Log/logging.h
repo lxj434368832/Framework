@@ -276,6 +276,7 @@ namespace zxl
     {
     public:
         static zx_logger* instance();
+		static void delete_instance();
         ~zx_logger();
     private:
         zx_logger();

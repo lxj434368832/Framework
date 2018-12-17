@@ -8,6 +8,7 @@
 #endif
 
 using namespace zxl;
+
 zx_logger* zx_logger::s_instance_ = nullptr;
 zx_logger* zx_logger::instance()
 {
@@ -16,6 +17,14 @@ zx_logger* zx_logger::instance()
     return s_instance_;
 }
 
+void zx_logger::delete_instance()
+{
+	if (s_instance_)
+	{
+		delete s_instance_;
+		s_instance_ = nullptr;
+	}
+}
 zx_logger::zx_logger() : is_running_(true)
 {
 	_load_container_from_config(cfg_);

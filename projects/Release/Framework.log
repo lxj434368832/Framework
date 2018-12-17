@@ -1,0 +1,16 @@
+﻿  cfg_reg_reader.cpp
+  CharacterSet.cpp
+  charset.cpp
+..\source\charset.cpp(16): warning C4244: “参数”: 从“uint64_t”转换到“ULONG”，可能丢失数据
+  ConfigManage.cpp
+  FileHandle.cpp
+  hmac_sha1.cpp
+  hook.cpp
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(1544): warning C4091: “typedef ”: 没有声明变量时忽略“”的左侧
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\dbghelp.h(3190): warning C4091: “typedef ”: 没有声明变量时忽略“”的左侧
+  MLock.cpp
+  MTimer.cpp
+  ProcessHandle.cpp
+  sockets.cpp
+  Utils.cpp
+  Framework.vcxproj -> E:\ProgramSrc\Framework\projects\..\lib\Framework\Release\Framework.lib
