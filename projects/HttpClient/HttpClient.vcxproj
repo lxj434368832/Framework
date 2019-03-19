@@ -10,6 +10,21 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HttpClient.cpp" />
+    <ClCompile Include="HttpDownload.cpp" />
+    <ClCompile Include="HttpHeader.cpp" />
+    <ClCompile Include="HttpRequest.cpp" />
+    <ClCompile Include="HttpUpload.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HttpClient.h" />
+    <ClInclude Include="HttpDownload.h" />
+    <ClInclude Include="HttpHeader.h" />
+    <ClInclude Include="HttpRequest.h" />
+    <ClInclude Include="HttpUpload.h" />
+    <ClInclude Include="IHttpRequest.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8CE60490-BE6C-4417-B101-C4D3F62E4B47}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -72,14 +87,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\source\httpclient\HttpClient.cpp" />
-    <ClCompile Include="..\..\source\httpclient\HttpHeader.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\include\httpclient\HttpClient.h" />
-    <ClInclude Include="..\..\include\httpclient\HttpHeader.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

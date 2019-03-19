@@ -1,5 +1,4 @@
 #pragma once
-#include <WinSock2.h>
 #include <string>
 #include <xhash>
 #include <unordered_map>
@@ -26,11 +25,11 @@ enum HTTP_METHOD
 #define  HEADER_ACCEPT_ENCODING  "Accept-Encoding"  //数据编码方式
 #define  HEADER_ACCEPT_LANGUAGE  "Accept-Language"  //语言种类
 #define  HEADER_AUTHORIZATION    "Authorization"    //签名
-#define  HEADER_SIGN_DATE        "SignDate"       //消息发起的时间戳
+#define  HEADER_SIGN_DATE        "Sign-Date"       //消息发起的时间戳
 #define  HEADER_HOST             "Host"             //URL中的主机和端口
 #define  HEADER_CONTENT_LENGTH   "Content-Length"   //消息正文的长度
 #define  HEADER_CONTENT_TYPE     "Content-Type"     //说明了请求主体的内容是如何编码
-#define  HEADER_MSG_IDENT        "MsgIdent"        //消息唯一标识
+#define  HEADER_MSG_IDENT        "Msg-Ident"        //消息唯一标识
 #define  HEADER_OPERATOR         "Operator"         //接口调用者uId
 
 //value
@@ -50,10 +49,6 @@ enum HTTP_METHOD
 #define HTTP_METHOD_TRACE_STR					"TRACE"
 #define HTTP_METHOD_OPTIONS_STR					"OPTIONS"
 #define HTTP_METHOD_CONNECT_STR					"CONNECT"
-
-
-bool GetMacByGetAdaptersInfo(std::string& macOUT);
-bool GetMacByGetAdaptersAddresses(std::string& macOUT);
 
 class http_request_header
 {
