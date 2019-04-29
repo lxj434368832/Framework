@@ -2,6 +2,7 @@
 
 #include <string>
 #include <windows.h>
+#include <stdint.h>
 
 class charset
 {
