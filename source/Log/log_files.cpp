@@ -21,7 +21,6 @@ long log_files::get_file_size()
 	return length;
 }
 
-
 //*****************************************************************************
 //	函数说明：	读取文件
 //	函数原型：	long file_read_string(char *filename, CString &out)
@@ -318,6 +317,7 @@ void log_files::log_printf(char *ctext, ...)
 	SYSTEMTIME time;
 	GetLocalTime(&time);
 	sprintf_s(temp_buf, "[%d:%d:%d:%d] ", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
+	
 	va_list arg_list;
 	va_start(arg_list, ctext);
 	vsprintf(temp_buf + strlen(temp_buf), ctext, arg_list);

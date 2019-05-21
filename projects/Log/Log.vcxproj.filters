@@ -15,18 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\log\logging.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\log\Log.cpp">
+    <ClCompile Include="..\..\source\Log\LogFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\log\logging.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\log\Log.h">
+    <ClInclude Include="..\..\include\Log\LogFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

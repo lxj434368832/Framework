@@ -115,8 +115,9 @@ void mqwUtils::ANSIToUTF8(std::string& str)
 {
 	wchar_t * buf = ANSIToUnicode(str.c_str());
 	char * ret = UnicodeToUTF8(buf);
-	free(buf);
 	str = ret;
+	free(buf);
+	free(ret);
 }
 
 char* mqwUtils::UTF8ToANSI(const char* str)
@@ -132,6 +133,8 @@ void mqwUtils::UTF8ToANSI(std::string& str)
 	wchar_t * buf = UTF8ToUnicode(str.c_str());
 	char * ret = UnicodeToANSI(buf);
 	str = ret;
+	free(buf);
+	free(ret);
 }
 
 void mqwUtils::replace(LPSTR source, char look, char dest)

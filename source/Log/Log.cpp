@@ -5,6 +5,9 @@
 /*
 WriteLog: 写日志函数---如果日志文件超过指定大小 则从0开始
 */
+#define MLOG(tp, format, ...)  do{  \
+    printf("[%s:%d]",__FUNCTION__,__LINE__);  \
+    printf(format, ##__VA_ARGS__); printf("\n"); }while(0)
 
 
 
@@ -40,7 +43,7 @@ void LOG(LOG_TYPE t, char* format, ...)
 
     FILE *pFile = NULL;
     int dwFileSize = 0;
-    va_list arg;
+    va_list argList;
 
     SYSTEMTIME tm;
 	char strTime[MAX_LOG_ROW_SIZE] = { 0 };
@@ -90,11 +93,11 @@ void LOG(LOG_TYPE t, char* format, ...)
             break;
     }
     //处理参数
-    va_start(arg, format);
-    vfprintf(pFile, format, arg);
-    fprintf(pFile, "\n");
+    va_start(argList, format);
+    vfprintf(pFile, format, argList);
+	fprintf(pFile, "\n");
+	va_end(argList);
     fflush(pFile);
-    va_end(arg);
     fclose(pFile);
 
 END_LOG:
