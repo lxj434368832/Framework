@@ -47,82 +47,81 @@ const std::string charset::utf8_to_ans(const std::string &u_str)
 
 	std::vector<char> buff(wTemp.size() * 2);
 
-	typedef std::codecvt<wchar_t, char, mbstate_t> convert_ansi;
-	int res = std::use_facet<convert_ansi>(loc).out(
-		state,wTemp.data(), wTemp.data() + wTemp.size(), ws_next,
+	const std::codecvt<wchar_t, char, std::mbstate_t>& cvt =
+		std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+
+	int res = cvt.out(state,wTemp.data(), wTemp.data() + wTemp.size(), ws_next,
 			buff.data(), buff.data() + buff.size(), sz_next);
 
-	if (convert_ansi::ok == res)
+	if (std::codecvt_base::ok == res)
 	{
 		return std::string(buff.data(), sz_next);
 	}
 	return "";
 }
 
-const std::string charset::UnicodeToANSI(const std::wstring& src)
+const std::string charset::UnicodeToANSI(const wchar_t* strUnicode)
 {
 	std::locale sys_locale("");
 
-	const wchar_t* data_from = src.c_str();
-	const wchar_t* data_from_end = src.c_str() + src.size();
-	const wchar_t* data_from_next = 0;
+	const size_t iFromSize = wcslen(strUnicode);
+	const wchar_t* data_from = strUnicode;
+	const wchar_t* data_from_end = strUnicode + iFromSize;
+	const wchar_t* data_from_next = nullptr;
 
-	int wchar_size = 4;
-	char* data_to = new char[(src.size() + 1) * wchar_size];
-	char* data_to_end = data_to + (src.size() + 1) * wchar_size;
-	char* data_to_next = 0;
+	const size_t iUnicodeLen = 4;
+	int iToSize = iFromSize * iUnicodeLen + 1;
+	std::vector<char> vct_data_to(iToSize);
+	char* data_to = vct_data_to.data();
+	char* data_to_end = data_to + iToSize;
+	char* data_to_next = nullptr;
 
-	memset(data_to, 0, (src.size() + 1) * wchar_size);
+	const std::codecvt<wchar_t, char, std::mbstate_t>& cvt =
+		std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(sys_locale);
 
-	typedef std::codecvt<wchar_t, char, mbstate_t> codecvt_ansi;
 	mbstate_t out_state = { 0 };
-	auto result = std::use_facet<codecvt_ansi>(sys_locale).out(
-		out_state, data_from, data_from_end, data_from_next,
+	auto result = cvt.out(out_state, data_from, data_from_end, data_from_next,
 		data_to, data_to_end, data_to_next);
 
-	if (result == codecvt_ansi::ok)
+	std::string strANSI = vct_data_to.data();
+	if (result != std::codecvt_base::ok)
 	{
-		std::string dst = data_to;
-		delete[] data_to;
-		return dst;
+		std::cerr << "UnicodeToANSI×ª»»Ê§°Ü£¡";
 	}
-	else
-	{
-		delete[] data_to;
-		return std::string("");
-	}
+	return strANSI;
 }
 
-const std::wstring charset::ANSIToUnicode(const std::string& src)
+const std::wstring charset::ANSIToUnicode(const char* strANSI)
 {
-	std::locale sys_locale("");
+//#ifdef _MSC_VER
+//	std::locale loc("zh-CN");
+//#else
+//	std::locale loc("zh_CN.GB18030");
+//#endif
+	std::locale loc("");
+	mbstate_t state = { 0 };
 
-	const char* data_from = src.c_str();
-	const char* data_from_end = src.c_str() + src.size();
+	const size_t iFromSize = strlen(strANSI);
+	const char* data_from = strANSI;
+	const char* data_from_end = strANSI + iFromSize;
 	const char* data_from_next = nullptr;
 
-	wchar_t* data_to = new wchar_t[src.size() + 1];
-	wchar_t* data_to_end = data_to + src.size() + 1;
+	const std::codecvt<wchar_t, char, std::mbstate_t>& cvt =
+		std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+
+	int iToSize = cvt.length(state, data_from, data_from_end, iFromSize);
+	std::wstring strUnicode(iToSize, 0);
+	wchar_t* data_to = (wchar_t*)strUnicode.data();
+	wchar_t* data_to_end = data_to + iToSize;
 	wchar_t* data_to_next = nullptr;
 
-	wmemset(data_to, 0, src.size() + 1);
-
-	typedef std::codecvt<wchar_t, char, mbstate_t> codecvt_ansi;
-	mbstate_t in_state = { 0 };
-	auto result = std::use_facet<codecvt_ansi>(sys_locale).in(
-		in_state, data_from, data_from_end, data_from_next,
+	auto result = cvt.in(state, data_from, data_from_end, data_from_next,
 		data_to, data_to_end, data_to_next);
-	if (result == codecvt_ansi::ok)
+	if (result != std::codecvt_base::ok)
 	{
-		std::wstring dst = data_to;
-		delete[] data_to;
-		return dst;
+		std::cerr << "ANSIToUnicode×ª»»Ê§°Ü£¡";
 	}
-	else
-	{
-		delete[] data_to;
-		return std::wstring(L"");
-	}
+	return strUnicode;
 }
 
 const std::string charset::UnicodeToUTF8(const std::wstring& wstr)

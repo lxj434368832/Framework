@@ -1,10 +1,11 @@
 #include <vld.h>
-#include <stdlib.h>
-#include <tchar.h>
-#include <windows.h>
 #include "..\..\include\LogFile.h"
 #include "..\..\include\CharacterSet.h"
 #include "..\..\include\charset.h"
+#include <iostream>
+#include <tchar.h>
+#include <windows.h>
+#include <atlconv.h>
 
 #ifdef _DEBUG
 #pragma comment(lib,"../../lib/Frameworkd.lib")
@@ -42,7 +43,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::string strAnsi1("w①我我我我我我");
 	std::string strAnsi = mqwUtils::UnicodeToANSI(strUnicode.data());
 	std::string strUTF8 = mqwUtils::UnicodeToUTF8(strUnicode.data());
-	std::string strAnsi2 = charset::utf8_to_ans(strUTF8);
+	std::string strAns3 = charset::UnicodeToANSI(strUnicode.data());
 
 	logm() << "转换前的Ansi字符串为:" << strAnsi1;
 	logm() << "转换后的Ansi字符串为:" << strAnsi;
