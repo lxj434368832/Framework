@@ -2,8 +2,8 @@
 #include <sstream>
 #include <time.h>
 #include "HttpHeader.h"		  
-#include "../../include/base64.h"
-#include "../../include/hmac_sha1.h"
+#include "../../include/CodeSecurity/base64.h"
+#include "../../include/CodeSecurity/hmac_sha1.h"
 #include <iostream>
 #include <sys/timeb.h>
 

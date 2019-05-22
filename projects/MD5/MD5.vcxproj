@@ -72,15 +72,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\source\md5\MD5.cpp" />
-    <ClCompile Include="..\..\source\md5\MD5File.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\include\md5\MD5.h" />
-    <ClInclude Include="..\..\include\md5\MD5File.h" />
-    <ClInclude Include="..\..\include\md5\MD5Global.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

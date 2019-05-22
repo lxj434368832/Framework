@@ -21,7 +21,6 @@ private:
 
 	// 注册表相关
 	HKEY								m_keyRoot;
-
 	// 配置文件相关
 	std::string							m_strConfigFile;
 };

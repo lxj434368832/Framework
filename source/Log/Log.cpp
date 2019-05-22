@@ -2,6 +2,7 @@
 #include<mutex>
 #include <windows.h>
 
+
 /*
 WriteLog: 写日志函数---如果日志文件超过指定大小 则从0开始
 */

@@ -1,5 +1,5 @@
 #include "../../include/Log/log_files.h"
-#include "../../include/charset.h"
+#include "../../include/CharacterSet.h"
 #include "../../include/CommonDefine.h"
 
 //#include <cstdarg>          // 定义了va_list相关
@@ -110,7 +110,7 @@ bool log_files::save_mem_log(char * f_name, char * sstr, char * src, int len)
 	if (src && len)
 	{
 		char *tbuff = (char *)malloc(len * 5);
-		charset::bin_to_hex(src, len, tbuff, 0, " ", 0x10);
+		mqwUtils::bin_to_hex(src, len, tbuff, 0, " ", 0x10);
 		fputs(tbuff, fp);
 		fputs("\r\n", fp);
 		free(tbuff);

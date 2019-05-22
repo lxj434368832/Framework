@@ -1,5 +1,7 @@
 #include "../include/domain_name.h"
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 int get_host_ip(char *host_name, ADDRESS_FAMILY af, std::list<std::wstring> &list);
 
 int zxu::get_host_ipv4(char *host_name, std::list<std::wstring> &list)
@@ -47,7 +49,7 @@ int get_host_ip(char *host_name, ADDRESS_FAMILY af, std::list<std::wstring> &lis
 	// Retrieve each address and print out the hex bytes
 	for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
 	{
-		dwRetval = WSAAddressToString(ptr->ai_addr, ptr->ai_addrlen, NULL, ipstringbuffer, &bufferLength);
+		dwRetval = WSAAddressToStringA(ptr->ai_addr, ptr->ai_addrlen, NULL, ipstringbuffer, &bufferLength);
 
 		if (dwRetval)
 		{

@@ -15,25 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\base64.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\CharacterSet.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\FileHandle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\hmac_sha1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\MTimer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ProcessHandle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\cfg_reg_reader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\charset.h">
@@ -45,16 +27,31 @@
     <ClInclude Include="..\include\ConfigManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\FileHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\GlobalDefine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\hook.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LogFile.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\MLock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ResourceManage.h">
+    <ClInclude Include="..\include\MTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\sockets.h">
+    <ClInclude Include="..\include\ProcessHandle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ResourceManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils.h">
@@ -65,34 +62,28 @@
     <ClCompile Include="..\source\CharacterSet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\FileHandle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\hmac_sha1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\MTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\ProcessHandle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\cfg_reg_reader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\charset.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\ConfigManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\FileHandle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="..\source\hook.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\LogFile.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\MLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\sockets.cpp">
+    <ClCompile Include="..\source\MTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ProcessHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\Utils.cpp">

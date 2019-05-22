@@ -1,6 +1,6 @@
 #pragma once
 
-#include <afxstr.h>
+#include <afxstr.h>		//MFCÄ£¿é
 
 class CXMLReader
 {

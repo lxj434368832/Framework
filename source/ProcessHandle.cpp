@@ -567,8 +567,8 @@ BOOL ProcessHandle::GetTokenByName(LPTSTR lpName, HANDLE &hToken)
 void enumProcessPath()
 {
 	DWORD processid[1024], needed, processcount, i;
-	HANDLE hProcess;
-	HMODULE hModule;
+	HANDLE hProcess = NULL;
+	HMODULE hModule = NULL;
 	char path[MAX_PATH] = "";
 	printf("ShowProcessPath with [Process Status API]/n");
 	EnumProcesses(processid, sizeof(processid), &needed);
@@ -587,9 +587,9 @@ void enumProcessPath()
 		{
 			printf("Failed!!!/n");
 		}
+		CloseHandle(hProcess); 
+		CloseHandle(hModule);
 	}
-	CloseHandle(hProcess);
-	CloseHandle(hModule);
 	printf("/nProcess Count:%d/n/n", processcount);
 
 }
