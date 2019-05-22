@@ -6,8 +6,8 @@
 
 namespace charset
 {
-	const std::string ans_to_utf8(const std::string &a_str); // ANSIתUTF-8(c++11)
-	const std::string utf8_to_ans(const std::string &u_str); // UTF-8תANSI(c++11)
+	const std::string ans_to_utf8(const std::string &a_str); // ANSI?UTF-8(c++11)
+	const std::string utf8_to_ans(const std::string &u_str); // UTF-8?ANSI(c++11)
 	
 	const std::string UnicodeToANSI(const std::wstring& src);
 	const std::wstring ANSIToUnicode(const std::string& src);

@@ -26,9 +26,12 @@ typedef enum _tagENUM_LOG_TYPE
 
 
 //初始化日志
-void InitLog();
+void InitLog(char *pFileName = "Application");
 //设置日志参数
-void SetLogParam(int nLogLevel=LOG_RTM, int nLogFileSize = MAX_LOG_FILE_SIZE);
+void SetLogParam(int nLogLevel= LOG_RTM, int nLogFileSize = MAX_LOG_FILE_SIZE);
 //写日志函数
 void LOG(LOG_TYPE t, char* format, ...);
 
+#define logm(format, ...) LOG(LOG_RTM, format, ...)
+#define loge(format, ...) LOG(LOG_ERROR, format, ...)
+#define logd(format, ...) LOG(LOG_DEBUG, format, ...)

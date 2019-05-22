@@ -20,11 +20,11 @@ std::recursive_mutex g_cs;
 std::recursive_mutex g_avcs;
 bool g_bInit=false;
 
-void InitLog()
+void InitLog(char *pFileName)
 {
 	char path[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, path);
-	sprintf_s(g_szFileName, "%s//DATAEXCHANGE.log", path);
+	sprintf_s(g_szFileName, "%s/%s.log", path, pFileName);
 
 	g_nLogLevel = LOG_NUM;
     g_nLogFileSize = MAX_LOG_FILE_SIZE;
@@ -40,30 +40,29 @@ void SetLogParam(int nLogLevel, int nLogFileSize)
 void LOG(LOG_TYPE t, char* format, ...)
 {
     if( false == g_bInit ) InitLog();
+	if (t > g_nLogLevel) return;
+
     g_cs.lock();
 
-    FILE *pFile = NULL;
-    int dwFileSize = 0;
-    va_list argList;
 
+	//获取当前时间
     SYSTEMTIME tm;
 	char strTime[MAX_LOG_ROW_SIZE] = { 0 };
-	//获取当前时间
 	GetLocalTime(&tm);
 	sprintf_s(strTime, MAX_LOG_ROW_SIZE, "%04d-%02d-%02d %02d:%02d:%02d %03d",
 		tm.wYear, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond, tm.wMilliseconds);
 
-    if (t > g_nLogLevel) goto END_LOG;
 
-    /* 文件处理 */
-
+	/* 文件处理 */
+	FILE *pFile = NULL;
     fopen_s(&pFile, g_szFileName, "a+");
     if (pFile == NULL)
     {
         goto END_LOG;
     }
 
-    //限制大小
+	//限制大小
+	int dwFileSize = 0;
     fseek(pFile, 0, SEEK_END);
     dwFileSize = ftell(pFile);
     if (dwFileSize > g_nLogFileSize)
@@ -93,11 +92,12 @@ void LOG(LOG_TYPE t, char* format, ...)
             fprintf(pFile, "[DBG]");
             break;
     }
-    //处理参数
+
+	//处理参数
+	va_list argList;
     va_start(argList, format);
     vfprintf(pFile, format, argList);
-	fprintf(pFile, "\n");
-	va_end(argList);
+    fprintf(pFile, "\n");
     fflush(pFile);
     fclose(pFile);
 
