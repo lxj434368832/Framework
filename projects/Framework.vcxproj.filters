@@ -57,6 +57,9 @@
     <ClInclude Include="..\include\Utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\domain_name.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\CharacterSet.cpp">

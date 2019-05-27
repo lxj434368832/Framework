@@ -88,6 +88,7 @@
     <ClInclude Include="..\include\charset.h" />
     <ClInclude Include="..\include\CommonDefine.h" />
     <ClInclude Include="..\include\ConfigManage.h" />
+    <ClInclude Include="..\include\domain_name.h" />
     <ClInclude Include="..\include\FileHandle.h" />
     <ClInclude Include="..\include\Framework.h" />
     <ClInclude Include="..\include\GlobalDefine.h" />

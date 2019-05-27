@@ -17,22 +17,14 @@ namespace mqwUtils
 
 	std::string UTF8ToANSI(const char* strUTF8);
 
-
-	/*多字符转换为宽字符ANSI - Unicode*/
-	wchar_t* Acsi2WideByte(const char* mbs);
-	/*宽字符转换为多字符Unicode - ANSI*/
-	char* w2m(const wchar_t* wcs);
-	std::wstring ANSI2Unicode(const std::string & str);
-	std::string Unicode2ANSI(const std::wstring & wstr);
-	std::wstring UTF82Unicode(const std::string & str);
-
 	//字符替换函数
 	void replace(LPSTR source, char look, char dest);
 	
-	// 与下函数相反
-	ULONG bin_to_hex(const char *src, ULONG len, char * out, bool mode, char *ktext, int hlen); 
+
 	// 内存数据格式转换为字符串，如内存数据0x33 0x61 0x41-> 3aA
-	ULONG hex_to_bin(const char *src, ULONG len, char *out);       
+	ULONG hex_to_bin(const char *src, ULONG len, char *out);
+	// 与上函数相反
+	ULONG bin_to_hex(const char *src, ULONG len, char * out, bool mode, char *ktext, int hlen);  
 
 
 	uint64_t bswap_64(uint64_t value);    // 数据位转换，下同
