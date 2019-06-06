@@ -11,6 +11,6 @@
 
 __interface IService
 {
-	void Start(DWORD argc, TCHAR* argv[]);
+	bool Start();
 	void Stop();
 };

@@ -28,8 +28,22 @@ namespace
 }
 
 //static  
-bool ServiceOperate::Install(LPCTSTR lpServiceName, LPCTSTR lpSrvPath, DWORD dwStartType, DWORD dwErrorControlType)
+bool ServiceOperate::Install(LPCTSTR lpServiceName, DWORD dwStartType, DWORD dwErrorControlType)
 {
+	CString escapedPath;
+	TCHAR* modulePath = escapedPath.GetBufferSetLength(MAX_PATH);
+
+	if (::GetModuleFileName(nullptr, modulePath, MAX_PATH) == 0)
+	{
+		_tprintf(_T("Couldn't get module file name: %d\n"), ::GetLastError());
+		return false;
+	}
+
+	escapedPath.ReleaseBuffer();
+	escapedPath.Remove(_T('\"'));
+
+	escapedPath = _T('\"') + escapedPath + _T('\"');
+
 	ServiceHandle svcControlManager = ::OpenSCManager(
 		NULL,                    // local computer
 		NULL,                    // ServicesActive database 
@@ -49,11 +63,11 @@ bool ServiceOperate::Install(LPCTSTR lpServiceName, LPCTSTR lpSrvPath, DWORD dwS
 		svcControlManager,										// SCM database 
 		lpServiceName,											// name of service 
 		lpServiceName,											// service name to displ
-		SERVICE_QUERY_STATUS,									// desired access 
+		SERVICE_ALL_ACCESS,										// desired access 
 		SERVICE_WIN32_OWN_PROCESS,								// service type 
 		dwStartType,											// start type 
 		dwErrorControlType,										// error control type 
-		lpSrvPath,												// path to service's bin
+		escapedPath,											// path to service's bin
 		nullptr,												// no load ordering grou
 		nullptr,												// no tag identifier 
 		(depends.IsEmpty() ? nullptr : depends.GetString()),	// no dependencies 
@@ -91,7 +105,7 @@ bool ServiceOperate::Install(LPCTSTR lpServiceName, LPCTSTR lpSrvPath, DWORD dwS
 	sfa.cActions = 3;
 
 	if (!ChangeServiceConfig2(servHandle, SERVICE_CONFIG_FAILURE_ACTIONS, &sfa))
-		_tprintf(TEXT("setServiceRecovery 设置自动重启失败!"));
+		_tprintf(TEXT("setServiceRecovery 设置自动重启失败，错误码:%d,请手动设置服务恢复选项!\n"),::GetLastError());
 
 	return true;
 }

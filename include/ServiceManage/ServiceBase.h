@@ -49,8 +49,9 @@ protected:
 	void WriteToEventLog(const CString& msg, WORD type = EVENTLOG_INFORMATION_TYPE);
 	void LogEvent(WORD type, LPCTSTR pszFormat, ...);
 
-	virtual void OnStart(DWORD argc, TCHAR* argv[])= 0;
-	virtual void OnStop() {}
+	virtual void OnStart(DWORD argc, TCHAR* argv[]) = 0;
+	virtual void OnContinueRun() = 0;
+	virtual void OnStop() = 0;
 	virtual void OnPause() {}
 	virtual void OnContinue() {}
 	virtual void OnShutdown() {}
@@ -74,7 +75,6 @@ private:
 
 	//execute sevice relation command
 	void Start(DWORD argc, TCHAR* argv[]);
-	void ContinueRun();
 	void Stop();
 	void Pause();
 	void Continue();
@@ -99,7 +99,6 @@ private:
 	SERVICE_STATUS m_svcStatus;
 	SERVICE_STATUS_HANDLE m_svcStatusHandle;
 
-	bool	m_bRunning;
 	static ServiceBase* m_service;
 };
 

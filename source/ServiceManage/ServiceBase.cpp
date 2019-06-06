@@ -34,8 +34,7 @@ ServiceBase::ServiceBase(const CString& name,
 	m_svcStatus.dwServiceSpecificExitCode = 0;
 	m_svcStatus.dwCheckPoint = 0;
 	m_svcStatus.dwWaitHint = 0;
-	m_bRunning = false;
-	m_service = NULL;
+	m_service = nullptr;
 }
 
 int ServiceBase::ProcessMain(int argc, _TCHAR* argv[])
@@ -43,25 +42,11 @@ int ServiceBase::ProcessMain(int argc, _TCHAR* argv[])
 	//带有参数的调用  
 	if (argc > 1 && ((*argv[1] == '-') || (*argv[1] == '/')))
 	{
-		if (_stricmp(argv[1] + 1, _T("install")) == 0 || _stricmp(argv[1] + 1, "i") == 0) {//安装服务  
+		if (_stricmp(argv[1] + 1, _T("install")) == 0 || _stricmp(argv[1] + 1, "i") == 0) 
+		{//安装服务  
 			_tprintf(_T("ServiceBase:Installing service \"%s\"\n"),m_name.GetBuffer());
 
-			CString escapedPath;
-			TCHAR* modulePath = escapedPath.GetBufferSetLength(MAX_PATH);
-
-			if (::GetModuleFileName(nullptr, modulePath, MAX_PATH) == 0)
-			{
-				_tprintf(_T("Couldn't get module file name,error code: %d\n"), ::GetLastError());
-				return false;
-			}
-
-			escapedPath.ReleaseBuffer();
-			escapedPath.Remove(_T('\"'));
-
-			escapedPath = _T('\"') + escapedPath + _T('\"');
-			_tprintf(_T("ServiceBase:service path:\"%s\"\n"), escapedPath.GetBuffer());
-
-			if (!ServiceOperate::Install(m_name.GetBuffer(), escapedPath, GetStartType(), GetErrorControlType()))
+			if (!ServiceOperate::Install(m_name.GetBuffer(), GetStartType(), GetErrorControlType()))
 			{
 				_tprintf(_T("ServiceBase:Couldn't install service \"%s\"\n"),m_name.GetBuffer());
 				return -1;
@@ -71,7 +56,8 @@ int ServiceBase::ProcessMain(int argc, _TCHAR* argv[])
 			return 0;
 		}
 
-		else if (_stricmp(argv[1] + 1, _T("remove")) == 0 || _stricmp(argv[1] + 1, "r") == 0) {//卸载服务  
+		else if (_stricmp(argv[1] + 1, _T("remove")) == 0 || _stricmp(argv[1] + 1, "r") == 0) 
+		{//卸载服务  
 			_tprintf(_T("ServiceBase:Uninstalling service \"%s\"\n"),m_name.GetBuffer());
 			if (!ServiceOperate::Uninstall(m_name.GetBuffer()))
 			{
@@ -82,13 +68,8 @@ int ServiceBase::ProcessMain(int argc, _TCHAR* argv[])
 			_tprintf(_T("ServiceBase:Service \"%s\" uninstalled\n"), m_name.GetBuffer());
 			return 0;
 		}
-		else if (_stricmp(argv[1] + 1, _T("debug")) == 0 || _stricmp(argv[1] + 1, "d") == 0)//以调试方式运行
-		{
-			this->DebugRun();
-			return 0;
-		}
 		else if (_stricmp(argv[1] + 1, _T("start")) == 0)
-		{
+		{//开始服务
 			if (!ServiceOperate::Start(m_name.GetBuffer()))
 			{
 				_tprintf(_T("ServiceBase:Couldn't start service: %s\n"), m_name.GetBuffer());
@@ -97,12 +78,17 @@ int ServiceBase::ProcessMain(int argc, _TCHAR* argv[])
 			return 0;
 		}
 		else if (_stricmp(argv[1] + 1, _T("stop")) == 0)
-		{
+		{//停止服务
 			if (!ServiceOperate::Stop(m_name.GetBuffer()))
 			{
 				_tprintf(_T("ServiceBase:Couldn't stop service: %s\n"), m_name.GetBuffer());
 				return -1;
 			}
+			return 0;
+		}
+		else if (_stricmp(argv[1] + 1, _T("debug")) == 0 || _stricmp(argv[1] + 1, "d") == 0)//以调试方式运行
+		{
+			this->DebugRun();
 			return 0;
 		}
 		else if (_stricmp(argv[1] + 1, _T("console")) == 0 || _stricmp(argv[1] + 1, "c") == 0) {//以控制台的方式运行  
@@ -254,7 +240,7 @@ bool ServiceBase::CmdRun()
 
 	while (1)//控制台运行主线程不能退出   
 	{
-		_tprintf(_T("->input cmd\r\n"));
+		_tprintf(_T("->input cmd,? help\r\n"));
 
 		_tscanf_s(_T("%s"), cinCmd, 128);		//接收控制台输入
 		if (_tcsncmp(cinCmd, _T("?"), 1) == 0)
@@ -306,12 +292,11 @@ bool ServiceBase::CmdRun()
 bool ServiceBase::DebugRun()
 {
 	m_service = this;
-	m_bRunning = true;
 	::SetConsoleCtrlHandler(ControlCtrlHandler, TRUE);
 
 	OnStart(0, NULL);
 
-	ContinueRun();
+	OnContinueRun();
 	return true;
 }
 
@@ -325,7 +310,6 @@ BOOL WINAPI ServiceBase::ControlCtrlHandler(DWORD dwCtrlType)
 	case CTRL_SHUTDOWN_EVENT:
 		_tprintf(TEXT("Stopping %s.\n"), m_service->m_name.GetBuffer());
 		m_service->OnStop();
-		m_service->m_bRunning = false;
 		return TRUE;
 	default:
 		break;
@@ -340,28 +324,13 @@ void ServiceBase::Start(DWORD argc, TCHAR* argv[])
 	OnStart(argc, argv);
 	SetStatus(SERVICE_RUNNING);
 
-	ContinueRun();
-}
-
-void ServiceBase::ContinueRun()
-{
-	m_bRunning = true;
-	//MSG   msg;
-	//while (m_bRunning && ::GetMessage(&msg, NULL, 0, 0))
-	//{
-	//	::TranslateMessage(&msg);
-	//}
-	while (m_bRunning)
-	{
-		::Sleep(2000);
-	}
+	OnContinueRun();
 }
 
 void ServiceBase::Stop()
 {
 	SetStatus(SERVICE_STOP_PENDING);
 	OnStop();
-	m_bRunning = false;
 	SetStatus(SERVICE_STOPPED);
 }
 

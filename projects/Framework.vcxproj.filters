@@ -33,9 +33,6 @@
     <ClInclude Include="..\include\Framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\GlobalDefine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\hook.h">
       <Filter>头文件</Filter>
     </ClInclude>

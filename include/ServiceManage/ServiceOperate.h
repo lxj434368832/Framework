@@ -12,7 +12,7 @@
 class ServiceOperate 
 {
 public:
-	static bool Install(LPCTSTR lpServiceName, LPCTSTR lpSrvPath, DWORD dwStartType, DWORD dwErrorControlType);
+	static bool Install(LPCTSTR lpServiceName, DWORD dwStartType, DWORD dwErrorControlType);
 	static bool Uninstall(LPCTSTR lpServiceName);
 	static BOOL IsInstalled(LPCTSTR lpServiceName);
 	static bool Start(LPCTSTR lpServiceName);

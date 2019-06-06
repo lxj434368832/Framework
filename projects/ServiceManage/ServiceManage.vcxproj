@@ -25,6 +25,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -74,15 +75,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\servicemanage\main.cpp" />
     <ClCompile Include="..\..\source\servicemanage\ServiceBase.cpp" />
     <ClCompile Include="..\..\source\servicemanage\ServiceOperate.cpp" />
+    <ClCompile Include="CService.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\servicemanage\CopyDisable.h" />
     <ClInclude Include="..\..\include\servicemanage\IService.h" />
     <ClInclude Include="..\..\include\servicemanage\ServiceBase.h" />
     <ClInclude Include="..\..\include\servicemanage\ServiceOperate.h" />
+    <ClInclude Include="CService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
