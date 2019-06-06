@@ -1,4 +1,4 @@
-#include "HttpRequest.h"		  				
+#include "HttpRequest.h"		  
 #include "../../include/curl/curl.h"
 #include "../../include/GlobalDefine.h" 
 
@@ -6,7 +6,7 @@
 IHttpRequest::IHttpRequest()
 {
 	m_bStart = true;
-	m_hCurl = nullptr;
+	m_hCurl = curl_easy_init();
 	m_pHeadList = nullptr;
 	m_lpData = nullptr;
 }
@@ -28,8 +28,6 @@ void IHttpRequest::StopCurrentRequest()
 	m_bStart = false;
 }
 
-
-
 HttpRequest::HttpRequest():
 	IHttpRequest()
 {
@@ -41,11 +39,6 @@ HttpRequest::~HttpRequest()
 
 int HttpRequest::SetRequestUrl(const std::string& strUrl)
 {
-	if (NULL == m_hCurl)
-	{
-		m_hCurl = curl_easy_init();
-	}
-
 	if (m_hCurl)
 	{
 		if (strUrl.substr(0, 5) == "https")
@@ -63,10 +56,6 @@ int HttpRequest::SetRequestHeader(const std::map<std::string, std::string>& head
 {
 	int iRet = CURLE_FAILED_INIT;
 
-	if (NULL == m_hCurl)
-	{
-		m_hCurl = curl_easy_init();
-	}
 	if (m_hCurl)
 	{
 		for (auto it = headers.begin(); it != headers.end(); ++it)
@@ -113,7 +102,7 @@ int HttpRequest::PerformRequest(const std::string &strUrl, const std::string &st
 	else
 	{
 		curl_easy_getinfo(m_hCurl, CURLINFO_RESPONSE_CODE, &iRet);
-		if (CURLE_OK == iRet || 200 == iRet || 500 == iRet)
+		if (200 == iRet || 500 == iRet)
 		{
 			logm() << "getInfo code is :" << iRet;
 			iRet = CURLE_OK;
@@ -124,17 +113,6 @@ int HttpRequest::PerformRequest(const std::string &strUrl, const std::string &st
 		}
 	}
 
-	if (m_pHeadList)
-	{
-		curl_slist_free_all(m_pHeadList);
-		m_pHeadList = NULL;
-	}
-
-	if (m_hCurl)
-	{
-		curl_easy_cleanup(m_hCurl);
-		m_hCurl = NULL;
-	}
 	return iRet;
 }
 

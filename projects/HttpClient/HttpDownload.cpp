@@ -1,4 +1,4 @@
-#include "HttpDownload.h"	   		 	 
+#include "HttpDownload.h"	   		 
 #include "../../include/curl/curl.h"
 #include "../../include/GlobalDefine.h" 
 

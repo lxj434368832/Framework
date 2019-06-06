@@ -1,4 +1,4 @@
-#include "HttpUpload.h"		  					
+#include "HttpUpload.h"		  
 #include "../../include/curl/curl.h"
 #include "../../include/GlobalDefine.h" 
 #include <io.h>
@@ -10,7 +10,7 @@ int HttpUpload::PerformRequest(const std::string &strUrl, const std::string &str
 	if (iRet) return iRet;
 
 	FILE *file;
-	if (fopen_s(&file, strFileName.c_str(), "wb"))
+	if (fopen_s(&file, strFileName.c_str(), "rb"))
 	{
 		loge() << "打开上传文件失败！文件路径：" << strFileName.c_str();
 		return CURLE_FAILED_INIT;
