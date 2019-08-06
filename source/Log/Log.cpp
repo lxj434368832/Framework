@@ -46,9 +46,9 @@ void LOG(LOG_TYPE t, char* format, ...)
 
 
 	//获取当前时间
-    SYSTEMTIME tm;
-	char strTime[MAX_LOG_ROW_SIZE] = { 0 };
+	SYSTEMTIME tm;
 	GetLocalTime(&tm);
+	char strTime[MAX_LOG_ROW_SIZE] = { 0 };
 	sprintf_s(strTime, MAX_LOG_ROW_SIZE, "%04d-%02d-%02d %02d:%02d:%02d %03d",
 		tm.wYear, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond, tm.wMilliseconds);
 

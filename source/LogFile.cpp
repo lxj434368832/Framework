@@ -85,12 +85,11 @@ void LogFile::CheckFileName()
 		char szFullPath[MAX_PATH];
 		char szDrive[32];
 		char szDir[MAX_PATH];
-		char szFileName[32];
+		char szFileName[64];
 
 		::GetModuleFileName(nullptr, szFullPath, MAX_PATH);
-		::_splitpath_s(szFullPath, szDrive, 32, szDir, MAX_PATH, szFileName, 32, nullptr, 0);
-		int iWriteCount = sprintf_s(szFullPath, MAX_PATH, "%s%slog\\",
-			szDrive, szDir, szFileName);
+		::_splitpath_s(szFullPath, szDrive, 32, szDir, MAX_PATH, szFileName, 64, nullptr, 0);
+		sprintf_s(szFullPath, MAX_PATH, "%s%slog\\", szDrive, szDir);
 
 		if (-1 == _access(szFullPath, 0))
 		{
@@ -165,4 +164,3 @@ void CALLBACK LogFile::TimeCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, 
 		pThis->CheckFileName();
 	}
 }
-
