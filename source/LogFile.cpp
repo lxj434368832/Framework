@@ -1,4 +1,9 @@
 #include "../include/LogFile.h"
+#include <thread>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
+#include <wtypes.h>
 #include <iostream>
 #include <io.h>
 #include <direct.h>
@@ -12,7 +17,7 @@ SingleLog::SingleLog()
 {
 	SYSTEMTIME sysTime;
 	GetLocalTime(&sysTime);
-	sprintf_s(m_szLineLog, "[%04d-%02d-%02d %02d:%02d:%02d %03d|",
+	sprintf_s(m_szLineLog, "[%04d-%02d-%02d %02d:%02d:%02d %03d]",
 		sysTime.wYear, sysTime.wMonth, sysTime.wDay,
 		sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds);
 	m_strStream << m_szLineLog;
@@ -36,16 +41,36 @@ void SingleLog::AddLog(char* format, ...)
 	m_strStream << m_szLineLog;
 }
 
+class LogFileData
+{
+	friend class LogFile;
+
+	bool			m_bStart;			//是否开始的标识
+	std::thread		*m_pThread;
+	std::queue<std::string>	m_logList;
+	std::mutex				m_mutexLogList;
+	std::condition_variable	m_cvConsumer;
+	char					m_szFileName[MAX_PATH];
+	int						m_iDayOfYear;
+	UINT					m_unTimerId;
+};
+
 LogFile* LogFile::s_instance = nullptr;
+
+void CALLBACK TimeCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+{
+	((LogFile *)dwUser)->Timeout(uTimerID);
+}
 
 LogFile::LogFile()
 {
-	m_bStart = true;
+	d = new LogFileData;
+	d->m_bStart = true;
 	CheckFileName();
-	m_pThread = new std::thread(&LogFile::WriteLogThread, this);
+	d->m_pThread = new std::thread(&LogFile::WriteLogThread, this);
 	//定时10分钟
-	m_unTimerId = ::timeSetEvent(600000, 60000, TimeCallback, (DWORD_PTR)this, TIME_PERIODIC);;
-	if (0 == m_unTimerId)
+	d->m_unTimerId = ::timeSetEvent(600000, 60000, TimeCallback, (DWORD_PTR)this, TIME_PERIODIC);;
+	if (0 == d->m_unTimerId)
 	{
 		std::cout << "创建文件检查定时器失败!" << std::endl;
 	}
@@ -60,17 +85,28 @@ LogFile::LogFile()
 
 LogFile::~LogFile()
 {
-	if (false == m_bStart) return;
+	if (false == d->m_bStart) return;
 	s_instance = nullptr;
-	m_bStart = false;
-	::timeKillEvent(m_unTimerId);
+	d->m_bStart = false;
+	::timeKillEvent(d->m_unTimerId);
 
 	::OutputDebugString("准备退出日志线程！\n");
-	m_cvConsumer.notify_all();
-	if (m_pThread->joinable())
-		m_pThread->join();
+	d->m_cvConsumer.notify_all();
+	if (d->m_pThread->joinable())
+		d->m_pThread->join();
 	::OutputDebugString("成功退出日志线程！\n");
-	delete m_pThread;
+	delete d->m_pThread;
+
+	delete d;
+	d = nullptr;
+}
+
+void LogFile::Timeout(unsigned uTimerID)
+{
+	if (uTimerID == d->m_unTimerId)
+	{
+		CheckFileName();
+	}
 }
 
 void LogFile::CheckFileName()
@@ -79,9 +115,9 @@ void LogFile::CheckFileName()
 	time_t ulNow = ::time(nullptr);
 	::localtime_s(&sNow, &ulNow);
 
-	if (sNow.tm_yday != m_iDayOfYear)
+	if (sNow.tm_yday != d->m_iDayOfYear)
 	{
-		m_iDayOfYear = sNow.tm_yday;
+		d->m_iDayOfYear = sNow.tm_yday;
 		char szFullPath[MAX_PATH];
 		char szDrive[32];
 		char szDir[MAX_PATH];
@@ -97,23 +133,23 @@ void LogFile::CheckFileName()
 				std::cout << "创建日志目录失败！" << std::endl;
 		}
 
-		m_mutexLogList.lock();
-		sprintf_s(m_szFileName, MAX_PATH, "%s%s%04d%02d%02d%02d%02d%02d.log",
+		d->m_mutexLogList.lock();
+		sprintf_s(d->m_szFileName, MAX_PATH, "%s%s%04d%02d%02d%02d%02d%02d.log",
 			szFullPath, szFileName,
 			sNow.tm_year + 1900, sNow.tm_mon + 1, sNow.tm_mday,
 			sNow.tm_hour, sNow.tm_min, sNow.tm_sec);
-		m_mutexLogList.unlock();
-		std::cout << "当前日志文件为:" << m_szFileName << std::endl;
+		d->m_mutexLogList.unlock();
+		std::cout << "当前日志文件为:" << d->m_szFileName << std::endl;
 	}
 }
 
 void LogFile::AddLog(std::string &strLog)
 {
-	if (false == m_bStart) return;
-	m_mutexLogList.lock();
-	m_logList.push(strLog);
-	m_cvConsumer.notify_one();
-	m_mutexLogList.unlock();
+	if (false == d->m_bStart) return;
+	d->m_mutexLogList.lock();
+	d->m_logList.push(strLog);
+	d->m_cvConsumer.notify_one();
+	d->m_mutexLogList.unlock();
 
 #ifdef _DEBUG
 	std::cout << strLog.c_str();
@@ -126,18 +162,18 @@ void LogFile::AddLog(std::string &strLog)
 
 void LogFile::WriteLogThread()
 {
-	while (m_bStart ||  !m_logList.empty())
+	while (d->m_bStart ||  !d->m_logList.empty())
 	{
 		std::string strLog;
 		{
-			std::unique_lock<std::mutex> lck(m_mutexLogList);
-			if (m_logList.empty())
+			std::unique_lock<std::mutex> lck(d->m_mutexLogList);
+			if (d->m_logList.empty())
 			{
-				m_cvConsumer.wait(lck);
+				d->m_cvConsumer.wait(lck);
 			}
-			if (m_logList.empty()) continue;
-			strLog = m_logList.front();
-			m_logList.pop();
+			if (d->m_logList.empty()) continue;
+			strLog = d->m_logList.front();
+			d->m_logList.pop();
 		}
 		WriteLog(strLog);
 	}
@@ -146,9 +182,9 @@ void LogFile::WriteLogThread()
 void LogFile::WriteLog(std::string &strLog)
 {
 	FILE	*pFile;
-	if (0 != fopen_s(&pFile, m_szFileName, "a"))
+	if (0 != fopen_s(&pFile, d->m_szFileName, "a"))
 	{
-		std::cout << "打开文件:" << m_szFileName << "失败!" << std::endl;
+		std::cout << "打开文件:" << d->m_szFileName << "失败!" << std::endl;
 		return;
 	}
 
@@ -156,11 +192,3 @@ void LogFile::WriteLog(std::string &strLog)
 	fclose(pFile);
 }
 
-void CALLBACK LogFile::TimeCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
-{
-	LogFile *pThis = (LogFile *)dwUser;
-	if (uTimerID == pThis->m_unTimerId)
-	{
-		pThis->CheckFileName();
-	}
-}

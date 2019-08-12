@@ -11,12 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\Log\Log.h" />
     <ClInclude Include="..\..\include\Log\logging.h" />
     <ClInclude Include="..\..\include\Log\log_files.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\Log\Log.cpp" />
     <ClCompile Include="..\..\source\Log\logging.cpp" />
     <ClCompile Include="..\..\source\Log\log_files.cpp" />
   </ItemGroup>

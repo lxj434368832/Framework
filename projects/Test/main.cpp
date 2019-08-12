@@ -1,7 +1,7 @@
 #include <vld.h>
-#include "..\..\include\LogFile.h"
 #include "..\..\include\CharacterSet.h"
 #include "..\..\include\charset.h"
+#include "LogTest.h"
 #include <iostream>
 #include <tchar.h>
 #include <windows.h>
@@ -16,7 +16,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	LogFile log;
+	//LogFile log;
 	//char *strPath;
 	//_get_pgmptr(&strPath);
 	//std::cout << strPath << std::endl;
@@ -45,9 +45,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::string strUTF8 = mqwUtils::UnicodeToUTF8(strUnicode.data());
 	std::string strAns3 = charset::UnicodeToANSI(strUnicode.data());
 
-	logm() << "转换前的Ansi字符串为:" << strAnsi1;
-	logm() << "转换后的Ansi字符串为:" << strAnsi;
-	//system("pause");
+	LOGM("转换前的Ansi字符串为:%s", strAnsi1.data());
+	LOGW("转换后的Ansi字符串为:%s", strAnsi.data());
+	//logm() << "转换前的Ansi字符串为:" << strAnsi1;
+	//logm() << "转换后的Ansi字符串为:" << strAnsi;
+	system("pause");
 	return 0;
 }
 

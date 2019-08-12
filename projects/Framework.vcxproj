@@ -57,6 +57,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,6 +93,7 @@
     <ClInclude Include="..\include\FileHandle.h" />
     <ClInclude Include="..\include\Framework.h" />
     <ClInclude Include="..\include\hook.h" />
+    <ClInclude Include="..\include\LibLog.h" />
     <ClInclude Include="..\include\LogFile.h" />
     <ClInclude Include="..\include\MLock.h" />
     <ClInclude Include="..\include\MTimer.h" />
@@ -105,6 +107,7 @@
     <ClCompile Include="..\source\ConfigManage.cpp" />
     <ClCompile Include="..\source\FileHandle.cpp" />
     <ClCompile Include="..\source\hook.cpp" />
+    <ClCompile Include="..\source\LibLog.cpp" />
     <ClCompile Include="..\source\LogFile.cpp" />
     <ClCompile Include="..\source\MLock.cpp" />
     <ClCompile Include="..\source\MTimer.cpp" />
