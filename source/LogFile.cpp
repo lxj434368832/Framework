@@ -182,9 +182,10 @@ void LogFile::WriteLogThread()
 void LogFile::WriteLog(std::string &strLog)
 {
 	FILE	*pFile;
-	if (0 != fopen_s(&pFile, d->m_szFileName, "a"))
+	errno_t err = fopen_s(&pFile, d->m_szFileName, "a");
+	if (0 != err)
 	{
-		std::cout << "打开文件:" << d->m_szFileName << "失败!" << std::endl;
+		std::cout << "打开文件:" << d->m_szFileName << "失败,error:" << err << std::endl;
 		return;
 	}
 

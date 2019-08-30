@@ -32,7 +32,7 @@ public:
 	}
 
 private:
-	char	m_szLineLog[256];
+	char	m_szLineLog[512];
 	std::stringstream m_strStream;
 };
 

@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <string>
 
+#define LOG_BUFFER_SIZE 8 * 1024 * 1024	//8M
+
 std::string GetAppDir();
 
 //写日志函数
@@ -21,25 +23,25 @@ void LOG(const char * szLibName, char* format, ...);
 #define LOGM(format, ...)  do{  \
 	char szFunInfo[256];	\
 	sprintf_s(szFunInfo,"[%s:%d]<Info> %s\n",__FUNCTION__,__LINE__, format);  \
-	LOG(LOGSUBDIR, szFunInfo, ##__VA_ARGS__); }while(0)
+	LOG(LIB_NAME, szFunInfo, ##__VA_ARGS__); }while(0)
 
 #define LOGD(format, ...)  do{  \
 	char szFunInfo[256];	\
 	sprintf_s(szFunInfo,"[%s:%d]<Debug> %s\n",__FUNCTION__,__LINE__, format);  \
-	LOG(LOGSUBDIR, szFunInfo, ##__VA_ARGS__); }while(0)
+	LOG(LIB_NAME, szFunInfo, ##__VA_ARGS__); }while(0)
 
 #define LOGW(format, ...)  do{  \
 	char szFunInfo[256];	\
 	sprintf_s(szFunInfo,"[%s:%d]<Warn> %s\n",__FUNCTION__,__LINE__, format);  \
-	LOG(LOGSUBDIR, szFunInfo, ##__VA_ARGS__); }while(0)
+	LOG(LIB_NAME, szFunInfo, ##__VA_ARGS__); }while(0)
 
 #define LOGE(format, ...)  do{  \
 	char szFunInfo[256];	\
 	sprintf_s(szFunInfo,"[%s:%d]<Error> %s\n",__FUNCTION__,__LINE__, format);  \
-	LOG(LOGSUBDIR, szFunInfo, ##__VA_ARGS__); }while(0)
+	LOG(LIB_NAME, szFunInfo, ##__VA_ARGS__); }while(0)
 
 
-/*以下放入CommonDefine前面,定义LOGSUBDIR为具体的模块名
+/*以下放入CommonDefine前面,定义LIB_NAME为具体的模块名
 #include "LibLog.h"
-#define LOGSUBDIR "LogTest"
+#define LIB_NAME "LogTest"
 */
