@@ -58,7 +58,7 @@ public:
 	* param strResponse: out,返回的数据
 	* return:		返回投递的结果命令,0为成功
 	*************************************************************************/
-	std::string SendRequest(const std::string strUrl, const std::string strCmdName, const std::string strData, int iModuleId =0);
+	std::string SendRequest(const std::string strUrl, const std::string strCmdName, const std::string strData);
 
 	/*************************************************************************
 	* function：投递一个请求
@@ -67,7 +67,7 @@ public:
 	* param strPost: in,请求的数据
 	* param strResponse: out,返回的数据
 	*************************************************************************/
-	void SendRequestAsyn(const std::string strUrl, const std::string strCmdName, const std::string strData, int iModuleId);
+	void SendRequestAsyn(const std::string strUrl, const std::string strCmdName, const std::string strData, int iModuleId = 0);
 
 	/*************************************************************************
 	* function：下载文件
@@ -84,7 +84,7 @@ public:
 	* param strFileName: in,下载的文件名
 	* return:		返回投递的结果命令
 	*************************************************************************/
-	void DownloadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName);
+	void DownloadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName, int iModuleId = 0);
 
 	/*************************************************************************
 	* function：同步上传文件
@@ -101,7 +101,7 @@ public:
 	* param strFileName: in,下载的文件名
 	* return:		返回投递的结果命令
 	*************************************************************************/
-	void UploadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName);
+	void UploadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName, int iModuleId = 0);
 
 private:
 	void RequestThreadProc();
@@ -119,14 +119,14 @@ private:
 	std::list<SClientContext*>	m_listDownload;
 	std::mutex				m_mtDownload;
 	std::condition_variable	m_cvDownload;
-	IHttpRequest			*m_pCurrentSynDownload;
+	IHttpRequest			*m_pCurrentSynDownload;	//此为支持直接停止当前的下载，具体根据实际业务扩展
 	IHttpRequest			*m_pCurrentASynDownload;
 
 	std::thread				*m_thdUpload;
 	std::list<SClientContext*>	m_listUpload;
 	std::mutex			m_mtUpload;
 	std::condition_variable	m_cvUpload;
-	IHttpRequest			*m_pCurrentSynUpload;
+	IHttpRequest			*m_pCurrentSynUpload;	//此为支持直接停止当前的上传，具体根据实际业务扩展
 	IHttpRequest			*m_pCurrentASynUpload;
 
 	std::map<std::string, fnReceiveCallback> m_mapCallback;

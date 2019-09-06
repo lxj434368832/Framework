@@ -25,6 +25,7 @@ HttpClient::~HttpClient()
 {
 	m_bStart = false;
 
+	//1、释放请求资源
 	if (m_thdRequest)
 	{
 		if(m_thdRequest->joinable()) m_thdRequest->join();
@@ -32,12 +33,26 @@ HttpClient::~HttpClient()
 		m_thdRequest = nullptr;
 	}
 
+	//2、释放下载资源
+	m_mtDownload.lock();
+	m_listDownload.clear();
+	m_mtDownload.unlock();
+	if (m_pCurrentASynDownload) m_pCurrentASynDownload->StopRequest();
+	if (m_pCurrentSynDownload) m_pCurrentSynDownload->StopRequest();	//注意多线程的同步性
+
 	if (m_thdDownload)
 	{
 		if (m_thdDownload->joinable()) m_thdDownload->join();
 		delete m_thdDownload;
 		m_thdDownload = nullptr;
 	}
+
+	//3、释放上传资源
+	m_mtUpload.lock();
+	m_listUpload.clear();
+	m_mtUpload.unlock();
+	if (m_pCurrentASynUpload) m_pCurrentASynUpload->StopRequest();
+	if (m_pCurrentSynUpload) m_pCurrentSynUpload->StopRequest();
 
 	if (m_thdUpload)
 	{
@@ -66,7 +81,7 @@ void HttpClient::SetAccessKey(LPCTSTR stdId, LPCTSTR strSecret)
 	m_strKeySecret = strSecret;
 }
 
-std::string HttpClient::SendRequest(const std::string strUrl, const std::string strCmdName, const std::string strData, int iModuleId)
+std::string HttpClient::SendRequest(const std::string strUrl, const std::string strCmdName, const std::string strData)
 {
 	std::string strRespond;
 	string strFullUrl = strUrl + strCmdName;
@@ -155,6 +170,7 @@ int HttpClient::DownloadFile(const std::string &strUrl, const std::string &strFi
 	iRet = request.SetRequestHeader(httpHead.GetHttpHead());
 	if (iRet) return iRet;
 
+	if (m_pCurrentSynDownload) loge() << "检测到多个线程同步下载，为防止意外的错误，请使用异步下载！";
 	m_pCurrentSynDownload = &request;
 	if (iRet = request.PerformRequest(strUrl, strFileName, strRespond))
 		loge() << "http下载文件失败，下载url为:" << strUrl;
@@ -163,12 +179,12 @@ int HttpClient::DownloadFile(const std::string &strUrl, const std::string &strFi
 	return iRet;
 }
 
-void HttpClient::DownloadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName)
+void HttpClient::DownloadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName, int iModuleId)
 {
 	SClientContext	*pContext = new SClientContext;
 	pContext->strUrl = strUrl;
 	pContext->strCmdName = strCmdName;
-	//pContext->iModuleId = iModuleId;
+	pContext->iModuleId = iModuleId;
 	pContext->strRequestData = strFileName;
 
 	std::unique_lock<std::mutex> lck(m_mtDownload);
@@ -214,7 +230,7 @@ void HttpClient::DownloadThreadProc()
 			}
 			else
 			{
-				loge() << "下载文件失败，文件url为:" << pContext->strCmdName;
+				loge() << "不存在当前命令:" << pContext->strCmdName << " 对应的处理函数！";
 			}
 			delete pContext;
 			m_pCurrentASynDownload = nullptr;
@@ -234,6 +250,7 @@ int HttpClient::UploadFile(const std::string &strUrl, const std::string &strFile
 	iRet = request.SetRequestHeader(httpHead.GetHttpHead());
 	if (iRet) return iRet;
 
+	if (m_pCurrentSynDownload) loge() << "检测到多个线程同步上传，为防止意外的错误，请使用异步上传！";
 	m_pCurrentSynUpload = &request;
 	if (iRet = request.PerformRequest(strUrl, strFileName, strRespond))
 		loge() << "http上传文件失败，下载url为:" << strUrl;
@@ -242,12 +259,12 @@ int HttpClient::UploadFile(const std::string &strUrl, const std::string &strFile
 	return iRet;
 }
 
-void HttpClient::UploadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName)
+void HttpClient::UploadFileAsyn(const std::string &strUrl, const std::string strCmdName, const std::string &strFileName, int iModuleId)
 {
 	SClientContext	*pContext = new SClientContext;
 	pContext->strUrl = strUrl;
 	pContext->strCmdName = strCmdName;
-	//pContext->iModuleId = iModuleId;
+	pContext->iModuleId = iModuleId;
 	pContext->strRequestData = strFileName;
 
 	std::unique_lock<std::mutex> lck(m_mtUpload);
@@ -293,7 +310,7 @@ void HttpClient::UploadThreadProc()
 			}
 			else
 			{
-				loge() << "上传文件失败，文件url为:" << pContext->strCmdName;
+				loge() << "不存在当前命令:" << pContext->strCmdName << " 对应的处理函数！";
 			}
 			delete pContext;
 			m_pCurrentASynUpload = nullptr;

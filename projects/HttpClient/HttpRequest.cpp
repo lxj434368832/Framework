@@ -23,7 +23,7 @@ IHttpRequest::~IHttpRequest()
 	}
 }
 
-void IHttpRequest::StopCurrentRequest()
+void IHttpRequest::StopRequest()
 {
 	m_bStart = false;
 }

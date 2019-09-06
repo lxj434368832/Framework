@@ -36,9 +36,10 @@ int HttpUpload::PerformRequest(const std::string &strUrl, const std::string &str
 	else
 	{
 		curl_easy_getinfo(m_hCurl, CURLINFO_RESPONSE_CODE, &iRet);
-		if (CURLE_OK == iRet || 200 == iRet || 500 == iRet)
+		if (CURLE_OK == iRet || 200 == iRet/* || 500 == iRet*/)
 		{
 			logm() << "getInfo code is :" << iRet;
+			strResponse = strFileName;
 			iRet = CURLE_OK;
 		}
 		else

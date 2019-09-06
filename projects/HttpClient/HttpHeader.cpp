@@ -26,25 +26,6 @@ http_request_header::http_request_header(HTTP_METHOD method, unsigned int conten
 }
 
 
-void http_request_header::auto_build_header()
-{
-	add_header_item(HEADER_ACCEPT, m_accept);
-	add_header_item(HEADER_ACCEPT_ENCODING, m_accept_encoding);
-	add_header_item(HEADER_ACCEPT_LANGUAGE, m_accept_language);
-	add_header_item(HEADER_AUTHORIZATION, m_authorization);
-	add_header_item(HEADER_SIGN_DATE, m_sign_date);
-    add_header_item(HEADER_OPERATOR, m_user_id);
-	add_header_item(HEADER_CONTENT_LENGTH, m_content_length);
-	add_header_item(HEADER_CONTENT_TYPE, m_content_type);
-	add_header_item(HEADER_MSG_IDENT, m_msg_ident);
-}
-
-std::map<std::string, std::string>& http_request_header::GetHttpHead()
-{
-	auto_build_header();
-	return m_headers;
-}
-
 string http_request_header::get_verb(HTTP_METHOD method)
 {
 	switch (method)
@@ -62,6 +43,25 @@ string http_request_header::get_verb(HTTP_METHOD method)
 		break;
 	}
 	return HTTP_METHOD_POST_STR;
+}
+
+std::map<std::string, std::string>& http_request_header::GetHttpHead()
+{
+	auto_build_header();
+	return m_headers;
+}
+
+void http_request_header::auto_build_header()
+{
+	add_header_item(HEADER_ACCEPT, m_accept);
+	add_header_item(HEADER_ACCEPT_ENCODING, m_accept_encoding);
+	add_header_item(HEADER_ACCEPT_LANGUAGE, m_accept_language);
+	add_header_item(HEADER_AUTHORIZATION, m_authorization);
+	add_header_item(HEADER_SIGN_DATE, m_sign_date);
+	add_header_item(HEADER_OPERATOR, m_user_id);
+	add_header_item(HEADER_CONTENT_LENGTH, m_content_length);
+	add_header_item(HEADER_CONTENT_TYPE, m_content_type);
+	add_header_item(HEADER_MSG_IDENT, m_msg_ident);
 }
 
 void http_request_header::add_header_item(string name, string value)
@@ -99,7 +99,8 @@ string http_request_header::make_authorization()
 	const char *str = NULL, *str1 = NULL;
 	//生成数字签名Signature
 	unsigned char digest[1024] = {0};
-	hmac_sha1((unsigned char*)m_access_key_secret.c_str(), m_access_key_secret.size(), (unsigned char*)plaintext.c_str(), plaintext.size(), digest);
+	hmac_sha1((unsigned char*)m_access_key_secret.c_str(), m_access_key_secret.size(), 
+		(unsigned char*)plaintext.c_str(), plaintext.size(), digest);
 	string base64in((char*)digest, 20);
 	//base64in = byte2hex(base64in.c_str(), base64in.size());
 

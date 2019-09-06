@@ -28,7 +28,8 @@ public:
 	/*************************************************************************
 	* function：停止当前请求
 	*************************************************************************/
-	void StopCurrentRequest();
+	void StopRequest();
+
 protected:
 	bool			m_bStart;			//是否开始标识
 	HANDLE			m_hCurl;			//curl处理的句柄

@@ -53,22 +53,25 @@ enum HTTP_METHOD
 class http_request_header
 {
 public:
-	http_request_header(HTTP_METHOD method, unsigned int content_length, const string& access_key_id, const string& access_key_secret, const string& user_id);
-	~http_request_header() {};
+	http_request_header(HTTP_METHOD method, unsigned int content_length, 
+		const string& access_key_id, const string& access_key_secret, const string& user_id);
+
 public:
-	void auto_build_header();
 	std::map<std::string, std::string>& GetHttpHead();
-	string get_verb(HTTP_METHOD method);
-	//添加项
-	void add_header_item(string name, string value);
 
 private:
+	string get_verb(HTTP_METHOD method);
 	//base64(hmac-sha1(AccessKeySecret,VERB  + "\n" + Content-Type + "\n" + SignDate+“\n”+ msg_ident)
 	string make_authorization();
 	//guid类型:%08X-%04X-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X
 	string make_guid();
 	string make_sign_date();
 	string make_content_length(unsigned int content_length);
+
+	void auto_build_header();
+	//添加项
+	void add_header_item(string name, string value);
+
 private:
 	std::map<std::string, std::string>	m_headers;	//http头列表
 	string m_verb;               //表示请求类型:POST、GET等等
