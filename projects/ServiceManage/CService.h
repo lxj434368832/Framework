@@ -1,6 +1,6 @@
 #pragma once
 /************************************************************************
-* function：服务相关控制的
+* function：服务功能具体的实现类
 * author :	明巧文
 * datetime：2018-04-03
 * company:  安碧捷科技股份有限公司
@@ -36,4 +36,3 @@ private:
 	IService *m_interface = nullptr;
 	bool m_bRun = false;
 };
-

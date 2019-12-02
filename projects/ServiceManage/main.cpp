@@ -17,5 +17,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	CService server(SERVICE_NAME);
 	return server.ProcessMain(argc, argv);
 }
-
-

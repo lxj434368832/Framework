@@ -63,11 +63,11 @@ private:
 };
 
 
-#define Log() (SingleLog())<< "["<< __FUNCTION__<<":"<<__LINE__
-#define logm() Log()<<"]<Info> "
-#define logd() Log()<<"]<Debug> "
-#define logw() Log()<<"]<Warn> "
-#define loge() Log()<<"]<Error> "
+#define Log() (SingleLog())<< "["<<__FUNCTION__<<":"<<__LINE__<< "]"
+#define logm() Log()<<"<Info> "
+#define logd() Log()<<"<Debug> "
+#define logw() Log()<<"<Warn> "
+#define loge() Log()<<"<Error> "
 
 //以下调用方式的消息长度不能超过256
 #define LOGM(format, ...)  do{  SingleLog log; \
