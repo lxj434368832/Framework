@@ -89,12 +89,17 @@ LogFile::~LogFile()
 	s_instance = nullptr;
 	d->m_bStart = false;
 	::timeKillEvent(d->m_unTimerId);
-
-	::OutputDebugString("准备退出日志线程！\n");
+	
+	char strMsg[128];
+	sprintf_s(strMsg, "还有%d条日志没有写入文件，请等待...\n", m_logList.size());
+	std::cout << strMsg;
+	::OutputDebugString(strMsg);
+	
 	d->m_cvConsumer.notify_all();
 	if (d->m_pThread->joinable())
 		d->m_pThread->join();
 	::OutputDebugString("成功退出日志线程！\n");
+	std::cout << "成功退出日志线程！\n";
 	delete d->m_pThread;
 
 	delete d;

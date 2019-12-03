@@ -3,4 +3,6 @@
 /.vs/
 /Debug/
 /Release/
+*.user
 *.sdf
+*.opensdf
