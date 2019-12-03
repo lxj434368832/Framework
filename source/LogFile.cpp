@@ -41,6 +41,8 @@ void SingleLog::AddLog(char* format, ...)
 	m_strStream << m_szLineLog;
 }
 
+
+
 class LogFileData
 {
 	friend class LogFile;
@@ -91,7 +93,7 @@ LogFile::~LogFile()
 	::timeKillEvent(d->m_unTimerId);
 	
 	char strMsg[128];
-	sprintf_s(strMsg, "还有%d条日志没有写入文件，请等待...\n", m_logList.size());
+	sprintf_s(strMsg, "还有%d条日志没有写入文件，请等待...\n", d->m_logList.size());
 	std::cout << strMsg;
 	::OutputDebugString(strMsg);
 	
