@@ -7,7 +7,6 @@
 
 namespace mqwUtils
 {
-	//以下是字符转换函数，由于返回的内存是malloc申请的，所以需要外部free
 	std::wstring ANSIToUnicode(const char* strANSI);
 	std::string UnicodeToANSI(const wchar_t* strUnicode);
 	std::wstring UTF8ToUnicode(const char* strUTF8);

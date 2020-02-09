@@ -9,16 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\CharacterSet.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\charset.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\CommonDefine.h">
@@ -28,12 +21,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\FileHandle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Framework.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\hook.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\LogFile.h">
@@ -54,10 +41,10 @@
     <ClInclude Include="..\include\Utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\domain_name.h">
+    <ClInclude Include="..\include\LibLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\LibLog.h">
+    <ClInclude Include="..\include\DomainName.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,16 +52,10 @@
     <ClCompile Include="..\source\CharacterSet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\charset.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\ConfigManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\FileHandle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\hook.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\LogFile.cpp">
@@ -93,6 +74,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\LibLog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\DomainName.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

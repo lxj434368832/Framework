@@ -1,4 +1,4 @@
-#include "../include/domain_name.h"
+#include "../include/DomainName.h"
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
