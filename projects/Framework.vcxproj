@@ -88,7 +88,6 @@
     <ClInclude Include="..\include\CharacterSet.h" />
     <ClInclude Include="..\include\CommonDefine.h" />
     <ClInclude Include="..\include\ConfigManage.h" />
-    <ClInclude Include="..\include\DomainName.h" />
     <ClInclude Include="..\include\FileHandle.h" />
     <ClInclude Include="..\include\LibLog.h" />
     <ClInclude Include="..\include\LogFile.h" />
@@ -101,7 +100,6 @@
   <ItemGroup>
     <ClCompile Include="..\source\CharacterSet.cpp" />
     <ClCompile Include="..\source\ConfigManage.cpp" />
-    <ClCompile Include="..\source\DomainName.cpp" />
     <ClCompile Include="..\source\FileHandle.cpp" />
     <ClCompile Include="..\source\LibLog.cpp" />
     <ClCompile Include="..\source\LogFile.cpp" />

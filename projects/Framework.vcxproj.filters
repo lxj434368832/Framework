@@ -44,9 +44,6 @@
     <ClInclude Include="..\include\LibLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\DomainName.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\CharacterSet.cpp">
@@ -74,9 +71,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\LibLog.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\DomainName.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
