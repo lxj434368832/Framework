@@ -1,10 +1,6 @@
 #include "../include/MTimer.h"
-#include <iostream>
-#include <minwindef.h>
-
-std::map<UINT, funTimerProc> MTimer::s_mapUser;
-
-std::recursive_mutex MTimer::s_mtxMap;
+#include "../include/LogFile.h"
+#include <windows.h>
 
 MTimer::MTimer()
 {
@@ -12,169 +8,74 @@ MTimer::MTimer()
 
 MTimer::~MTimer()
 {
+	Stop();
 }
 
-DWORD MTimer::GetTimerId()
+bool MTimer::Start(unsigned uInterval, funTimerProc lpTimerFunc, bool bStartCall)
 {
-	if (m_uTimerID)
+	if (m_pTimerThread)
 	{
-		return m_uTimerID;
+		Stop();
 	}
-	else
-		return (DWORD)m_hThread;
-}
 
-bool MTimer::start(UINT uElapse, funTimerProc lpTimerFunc,bool isStartCall)
-{
-	if (m_hThread)
-	{
-		std::cout << "已经开启了一个定时器，id：" << m_uTimerID << "先前的定时器将停止" << std::endl;
-		m_bStart = false;
-		if (WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, 1000))
-		{
-			::CloseHandle(m_hThread);
-		}
-	}
-	m_uElapse = uElapse;
 	m_funTimerProc = lpTimerFunc;
-	m_bIsStartCall = isStartCall;
 
-	m_hThread = ::CreateThread(NULL, 0, onThreadProc, this, 0, NULL);
-	if (NULL == m_hThread)
-	{
-		std::cout << "创建线程失败，错误码：" << ::GetLastError() << std::endl;
-		return false;
-	}
-	return true;
+	m_pTimerThread = new std::thread(&MTimer::TimerCallback, this, uInterval, bStartCall);
+	return (nullptr != m_pTimerThread);
 }
 
-DWORD WINAPI MTimer::onThreadProc(LPVOID lpParameter)
+void MTimer::TimerCallback(unsigned uInterval, bool bStartCall)
 {
+	LOGM("定时器线程：%d启动。", std::this_thread::get_id().hash());
+	if (bStartCall && m_funTimerProc)
+		m_funTimerProc();
 
-	MTimer *pThis = (MTimer*)lpParameter;
-	return pThis->ThreadProc();
-}
-
-DWORD MTimer::ThreadProc()
-{
-	if (m_bIsStartCall)
+	m_hTimerEvent = ::CreateEvent(NULL, false, false, NULL);
+	if (NULL == m_hTimerEvent)
 	{
-		m_funTimerProc((DWORD)m_hThread);
+		loge() << "创建定时器事件失败！";
+		return;
 	}
 
-	while (m_bStart)
+	while (true)
 	{
-		::Sleep(m_uElapse);
-		m_funTimerProc((DWORD)m_hThread);
-	}
-
-	return 0;
-}
-
-void MTimer::stop()
-{
-	if (m_hThread)
-	{
-		m_bStart = false;
-		if (WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, 500))
+		DWORD dwRet = ::WaitForSingleObject(m_hTimerEvent, uInterval);
+		if (WAIT_OBJECT_0 == dwRet)
 		{
-			::CloseHandle(m_hThread);
+			logm() << "正常退出定时器线程:"<< std::this_thread::get_id().hash();
+			break;
 		}
-		m_hThread = NULL;
-	}
-	else
-		std::cout << "timer has stoped!" << std::endl;
-}
-
-
-bool MTimer::start_timer(UINT uElapse, funTimerProc lpTimerFunc)
-{
-	if (m_hThread)
-	{
-		std::cout << "已经开启了一个定时器，id：" << m_uTimerID<<"先前的定时器将停止" << std::endl;
-		m_bStart = false;
-		if (WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, 1000))
+		else if (WAIT_TIMEOUT == dwRet)
 		{
-			::CloseHandle(m_hThread);
+			if (m_funTimerProc)
+				m_funTimerProc();
+		}
+		else
+		{
+			LOGM("定时器线程:%d 发生错误：%d。", std::this_thread::get_id().hash(), ::GetLastError());
+			break;
 		}
 	}
-
-	m_uElapse = uElapse;
-	m_funTimerProc1 = lpTimerFunc;
-	m_hThread = ::CreateThread(NULL, 0, onThreadProc1, this, 0, NULL);
-	if (NULL == m_hThread)
-	{
-		std::cout << "创建线程失败，错误码：" << ::GetLastError() << std::endl;
-		return false;
-	}
-	return true;
 }
 
-DWORD WINAPI MTimer::onThreadProc1(LPVOID lpParameter)
+void MTimer::Stop()
 {
-	MTimer *pThis = (MTimer*)lpParameter;
-	return pThis->ThreadProc1();
+	if (m_hTimerEvent)	
+		::SetEvent(m_hTimerEvent);
+
+	if (m_pTimerThread && m_pTimerThread->joinable())
+		m_pTimerThread->join();
+
+	if (m_hTimerEvent)
+	{
+		::CloseHandle(m_hTimerEvent);
+		m_hTimerEvent = nullptr;
+	}
+
+	if (m_pTimerThread)
+	{
+		delete m_pTimerThread;
+		m_pTimerThread = nullptr;
+	}
 }
 
-DWORD MTimer::ThreadProc1()
-{
-	DWORD dwRet = 0;
-	m_uTimerID = ::SetTimer(NULL, 0, m_uElapse, onTimerProc);
-	if (0 == m_uTimerID)
-	{
-		dwRet = ::GetLastError();
-		std::cout << "create timer failed, error code:" << dwRet << std::endl;
-		return dwRet;
-	}
-
-	{
-		std::lock_guard<std::recursive_mutex> lck(s_mtxMap);
-		s_mapUser[m_uTimerID] = m_funTimerProc1;
-	}
-
-	m_bStart = true;
-	MSG   msg;
-	while (m_bStart && GetMessage(&msg, NULL, 0, 0))
-	{
-		if (msg.message == WM_TIMER)
-		{
-			DispatchMessage(&msg);
-		}
-	}
-
-	return dwRet;
-}
-
-void CALLBACK MTimer::onTimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
-{
-	{
-		std::lock_guard<std::recursive_mutex> lck(s_mtxMap);
-		if (s_mapUser.find((UINT)idEvent) != s_mapUser.end())
-		{
-			s_mapUser[idEvent](idEvent);
-		}
-	}
-
-}
-
-void MTimer::stop_timer()
-{
-	if (m_hThread)
-	{
-		{
-			std::lock_guard<std::recursive_mutex> lck(s_mtxMap);
-			s_mapUser.erase(m_uTimerID);
-		}
-		::KillTimer(NULL, m_uTimerID);
-		m_uTimerID = 0;
-
-		m_bStart = false;
-		if (WAIT_TIMEOUT == ::WaitForSingleObject(m_hThread, 1000))
-		{
-			::CloseHandle(m_hThread);
-		}
-		m_hThread = NULL;
-	}
-	else
-		std::cout << "timer has stoped!" << std::endl;
-}
