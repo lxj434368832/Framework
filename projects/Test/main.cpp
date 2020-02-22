@@ -1,7 +1,7 @@
 #include <vld.h>
 #include "..\..\include\CharacterSet.h"
-#include "..\..\include\charset.h"
 #include "LogTest.h"
+#include "..\..\include\LogFile.h"
 #include <iostream>
 #include <tchar.h>
 #include <windows.h>
@@ -16,7 +16,9 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//LogFile log;
+	LogFile log;
+	LogTest test;
+	test.TestLogFile();
 	//char *strPath;
 	//_get_pgmptr(&strPath);
 	//std::cout << strPath << std::endl;
@@ -39,21 +41,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	//dwCount1 = GetTickCount();
 	//loge() << "第二次共计用时:" << dwCount1 - dwCount;
 	//logd() << "程序将退出！";
-	std::wstring strUnicode(L"w①我我我我我我");
+	/*std::wstring strUnicode(L"w①我我我我我我");
 	std::string strAnsi1("w①我我我我我我");
 	std::string strAnsi = mqwUtils::UnicodeToANSI(strUnicode.data());
 	std::string strUTF8 = mqwUtils::UnicodeToUTF8(strUnicode.data());
-	std::string strAns3 = charset::UnicodeToANSI(strUnicode.data());
 
 	for (int i = 0; i < 100; i++)
 	{
 		LOGM("转换前的Ansi字符串为:%s", strAnsi1.data());
 		LOGW("转换后的Ansi字符串为:%s", strAnsi.data());
 		Sleep(1000);
-	}
+	}*/
 
-	//logm() << "转换前的Ansi字符串为:" << strAnsi1;
-	//logm() << "转换后的Ansi字符串为:" << strAnsi;
 	system("pause");
 	return 0;
 }

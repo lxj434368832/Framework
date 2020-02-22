@@ -75,7 +75,7 @@ std::string GetAppDir()
 	return std::string(szDrive).append(szDir);
 }
 
-void LOG(const char * szLibName, char* format, ...)
+void LOG(const char * szLibName, const char* format, ...)
 {
 	if (nullptr == s_d) return;
 
@@ -107,7 +107,6 @@ void LOG(const char * szLibName, char* format, ...)
 	
 	//5、将日志信息添加到队列中
 	AddLog(info);
-
 }
 
 void AddLog(SLogInfo& info)

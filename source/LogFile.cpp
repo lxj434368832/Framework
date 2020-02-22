@@ -7,6 +7,7 @@
 #include <iostream>
 #include <io.h>
 #include <direct.h>
+#include <list>
 #ifdef WIN32
 #include <Windows.h>
 #endif
@@ -31,7 +32,7 @@ SingleLog::~SingleLog()
 		pLog->AddLog(m_strStream.str());
 }
 
-void SingleLog::AddLog(char* format, ...)
+void SingleLog::AddLog(const char* format, ...)
 {
 	va_list argList;
 	va_start(argList, format);
@@ -47,9 +48,9 @@ class LogFileData
 {
 	friend class LogFile;
 
-	bool			m_bStart;			//是否开始的标识
-	std::thread		*m_pThread;
-	std::queue<std::string>	m_logList;
+	bool					m_bStart;	//是否开始的标识
+	std::thread				*m_pThread;
+	std::list<std::string>	m_listLog;
 	std::mutex				m_mutexLogList;
 	std::condition_variable	m_cvConsumer;
 	char					m_szFileName[MAX_PATH];
@@ -93,19 +94,19 @@ LogFile::~LogFile()
 	::timeKillEvent(d->m_unTimerId);
 	
 	char strMsg[128];
-	sprintf_s(strMsg, "还有%d条日志没有写入文件，请等待...\n", d->m_logList.size());
+	sprintf_s(strMsg, "还有%d条日志没有写入文件，请等待...\n", d->m_listLog.size());
 	std::cout << strMsg;
 	::OutputDebugString(strMsg);
 	
 	d->m_cvConsumer.notify_all();
 	if (d->m_pThread->joinable())
 		d->m_pThread->join();
-	::OutputDebugString("成功退出日志线程！\n");
-	std::cout << "成功退出日志线程！\n";
 	delete d->m_pThread;
 
+	::OutputDebugString("成功退出日志线程！\n");
+	std::cout << "成功退出日志线程！\n";
+
 	delete d;
-	d = nullptr;
 }
 
 void LogFile::Timeout(unsigned uTimerID)
@@ -150,11 +151,11 @@ void LogFile::CheckFileName()
 	}
 }
 
-void LogFile::AddLog(std::string &strLog)
+void LogFile::AddLog(const std::string &strLog)
 {
 	if (false == d->m_bStart) return;
 	d->m_mutexLogList.lock();
-	d->m_logList.push(strLog);
+	d->m_listLog.push_back(strLog);
 	d->m_cvConsumer.notify_one();
 	d->m_mutexLogList.unlock();
 
@@ -169,24 +170,23 @@ void LogFile::AddLog(std::string &strLog)
 
 void LogFile::WriteLogThread()
 {
-	while (d->m_bStart ||  !d->m_logList.empty())
+	while (d->m_bStart ||  !d->m_listLog.empty())
 	{
-		std::string strLog;
+		std::list<std::string> listLog;
 		{
 			std::unique_lock<std::mutex> lck(d->m_mutexLogList);
-			if (d->m_logList.empty())
+			if (d->m_listLog.empty())
 			{
 				d->m_cvConsumer.wait(lck);
 			}
-			if (d->m_logList.empty()) continue;
-			strLog = d->m_logList.front();
-			d->m_logList.pop();
+			if (d->m_listLog.empty()) continue;
+			listLog.swap(d->m_listLog);		//一次性全部写入
 		}
-		WriteLog(strLog);
+		WriteLog(listLog);
 	}
 }
 
-void LogFile::WriteLog(std::string &strLog)
+void LogFile::WriteLog(std::list<std::string>& listLog)
 {
 	FILE	*pFile;
 	errno_t err = fopen_s(&pFile, d->m_szFileName, "a");
@@ -196,7 +196,11 @@ void LogFile::WriteLog(std::string &strLog)
 		return;
 	}
 
-	fprintf(pFile, strLog.c_str());
+	for (std::string &strLog : listLog)
+	{
+		fprintf(pFile, strLog.c_str());
+	}
+
 	fclose(pFile);
 }
 
