@@ -14,8 +14,6 @@
 
 #define LOG_BUFFER_SIZE 8 * 1024 * 1024	//8M
 
-std::string GetAppDir();
-
 //写日志函数
 void LOG(const char * szLibName, const char* format, ...);
 

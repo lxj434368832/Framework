@@ -20,7 +20,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -83,8 +83,10 @@
   <ItemGroup>
     <ClCompile Include="LogTest.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TextToSpeak.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CharactorTransport.h" />
     <ClInclude Include="LogTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,7 +24,7 @@ struct SLogPrivate
 	std::string				strAppDir;
 	DWORD					dwTickCount;
 	std::thread				*pThread;
-	std::map<std::string, std::string> mapFilePath;
+	std::map<std::string, std::string> mapFilePath;	//libName对应的文件路径
 	std::queue<SLogInfo>	queueLogList;
 	std::mutex				mutexLogList;
 	std::condition_variable	cvConsumer;
@@ -38,6 +38,7 @@ struct SLogPrivate
 
 static std::unique_ptr<SLogPrivate>  s_d(new SLogPrivate);
 
+std::string GetAppDir();
 void AddLog(SLogInfo& info);
 void WriteLogThread(SLogPrivate*);
 void WriteLog(std::string &strLibName, std::string& strLog);
@@ -150,8 +151,9 @@ void WriteLog(std::string &strLibName, std::string& strLog)
 	//每隔一个小时检测下文件名
 	if (3600000 < ::GetTickCount() - s_d->dwTickCount)
 	{
-		CheckFilePath("");
+		CheckFilePath("");		//检测所有的lib日志路径
 	}
+	if (strLog.empty())  return;
 
 	FILE	*pFile;
 	errno_t err = fopen_s(&pFile, strLogPath.data(), "a");
@@ -177,11 +179,11 @@ void CheckFilePath(std::string strLibName)
 	{
 		s_d->dwTickCount = ::GetTickCount();
 
-		if (0 == s_d->m_iDayOfYear)
+		if (0 == s_d->m_iDayOfYear)					//为0表示当天不用检测
 		{
 			s_d->m_iDayOfYear = sNow.tm_yday;
 		}
-		else if (sNow.tm_yday != s_d->m_iDayOfYear)
+		else if (sNow.tm_yday != s_d->m_iDayOfYear)	//天数不一样表示隔了一天，需要检测。
 		{
 			s_d->m_iDayOfYear = sNow.tm_yday;
 
