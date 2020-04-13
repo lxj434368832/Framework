@@ -81,7 +81,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LogTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TextToSpeak.h" />
   </ItemGroup>
