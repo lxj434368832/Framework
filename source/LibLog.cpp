@@ -1,7 +1,7 @@
 ﻿#include "../include/LibLog.h"
 #include <thread>
 #include <map>
-#include <queue>
+#include <list>
 #include <mutex>
 #include <condition_variable>
 #include <io.h>
@@ -10,11 +10,7 @@
 #include <windows.h>
 
 
-struct SLogInfo
-{
-	std::string strLibName;
-	std::string strLog;
-};
+typedef std::list<std::string> LogList;
 
 struct SLogPrivate
 {
@@ -25,7 +21,7 @@ struct SLogPrivate
 	DWORD					dwTickCount;
 	std::thread				*pThread;
 	std::map<std::string, std::string> mapFilePath;	//libName对应的文件路径
-	std::queue<SLogInfo>	queueLogList;
+	std::map<std::string, LogList>	mapLogList;
 	std::mutex				mutexLogList;
 	std::condition_variable	cvConsumer;
 
@@ -39,9 +35,9 @@ struct SLogPrivate
 static std::unique_ptr<SLogPrivate>  s_d(new SLogPrivate);
 
 std::string GetAppDir();
-void AddLog(SLogInfo& info);
+void AddLog(const char* szLibName, const std::string& strLog);
 void WriteLogThread(SLogPrivate*);
-void WriteLog(std::string &strLibName, std::string& strLog);
+void WriteLog(std::string strLibName, LogList& list);
 void CheckFilePath(std::string strLibName);
 
 SLogPrivate::SLogPrivate()
@@ -84,8 +80,7 @@ void LOG(const char * szLibName, const char* format, ...)
 	std::string strLogDir(s_d->strAppDir + szLibName);
 	if (-1 == _access(strLogDir.data(), 0)) return;
 
-	SLogInfo info;
-	info.strLibName = szLibName;
+	std::string strLog;
 
 	//3、写入时间信息
 	SYSTEMTIME tm;
@@ -93,7 +88,7 @@ void LOG(const char * szLibName, const char* format, ...)
 	char szTime[MAX_PATH];
     sprintf_s(szTime, "[%04d-%02d-%02d %02d:%02d:%02d %03d]",
 		tm.wYear, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond, tm.wMilliseconds);
-	info.strLog.append(szTime);
+	strLog.append(szTime);
 
 	//4、写入日志内容
 	va_list argList;
@@ -101,45 +96,49 @@ void LOG(const char * szLibName, const char* format, ...)
 
 	s_d->mutexBuffer.lock();
 	vsprintf_s(s_d->szBuffer, format, argList);
-	info.strLog.append(s_d->szBuffer);
+	strLog.append(s_d->szBuffer);
 	s_d->mutexBuffer.unlock();
 
 	va_end(argList);
 	
 	//5、将日志信息添加到队列中
-	AddLog(info);
+	AddLog(szLibName, strLog);
 }
 
-void AddLog(SLogInfo& info)
+void AddLog(const char* szLibName, const std::string& strLog)
 {
 	s_d->mutexLogList.lock();
-	s_d->queueLogList.push(info);
+	s_d->mapLogList[szLibName].push_back(strLog);
 	s_d->cvConsumer.notify_one();
 	s_d->mutexLogList.unlock();
 }
 
 void WriteLogThread(SLogPrivate* d)
 {
-	while (d->bStart)
+	while (d->bStart || !d->mapLogList.empty())
 	{
-		SLogInfo logInfo;
+		std::map<std::string, LogList>	mapLogList;
 		{
 			std::unique_lock<std::mutex> lck(d->mutexLogList);
-			if (d->queueLogList.empty())
+
+			if (d->mapLogList.empty())
 			{
 				d->cvConsumer.wait(lck);
 			}
-			if (d->queueLogList.empty()) continue;
-			logInfo = d->queueLogList.front();
-			d->queueLogList.pop();
+			if (d->mapLogList.empty()) continue;
+			mapLogList.swap(d->mapLogList);
 		}
-		WriteLog(logInfo.strLibName, logInfo.strLog);
+
+		for (auto it = d->mapLogList.begin(); it != d->mapLogList.end(); it++)
+		{
+			WriteLog(it->first, it->second);
+		}
 	}
 
 	::OutputDebugString("日志线程已经退出！\n");
 }
 
-void WriteLog(std::string &strLibName, std::string& strLog)
+void WriteLog(std::string strLibName, LogList& list)
 {
 	std::string strLogPath = s_d->mapFilePath[strLibName];
 	if (strLogPath.empty())
@@ -153,7 +152,6 @@ void WriteLog(std::string &strLibName, std::string& strLog)
 	{
 		CheckFilePath("");		//检测所有的lib日志路径
 	}
-	if (strLog.empty())  return;
 
 	FILE	*pFile;
 	errno_t err = fopen_s(&pFile, strLogPath.data(), "a");
@@ -163,7 +161,11 @@ void WriteLog(std::string &strLibName, std::string& strLog)
 		return;
 	}
 
-	fprintf(pFile, strLog.c_str());
+	for (std::string &strLog : list)
+	{
+		fprintf(pFile, strLog.c_str());
+	}
+
 	fclose(pFile);
 }
 
@@ -175,7 +177,7 @@ void CheckFilePath(std::string strLibName)
 	time_t ulNow = ::time(nullptr);
 	::localtime_s(&sNow, &ulNow);
 
-	if (strLibName.empty())
+	if (strLibName.empty())			//检测所有lib的文件路径是否隔天了
 	{
 		s_d->dwTickCount = ::GetTickCount();
 
@@ -198,7 +200,7 @@ void CheckFilePath(std::string strLibName)
 			}
 		}
 	}
-	else
+	else		//生成单个lib的文件路径
 	{
 		sprintf_s(szLogPath, MAX_PATH, "%s%s\\%s%04d%02d%02d%2d%2d%2d.log",
 			s_d->strAppDir.data(), strLibName.data(), strLibName.data(),
