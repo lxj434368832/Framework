@@ -1,7 +1,6 @@
 #include <vld.h>
 #include <iostream>
 #include <tchar.h>
-#include "..\..\include\LogFile.h"
 #include "LogTest.h"
 
 #ifdef _DEBUG
@@ -13,7 +12,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	LogFile log;
+	//LogFile log;
 
 	TestLibLog();
 	system("pause");

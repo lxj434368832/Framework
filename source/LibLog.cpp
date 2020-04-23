@@ -129,7 +129,7 @@ void WriteLogThread(SLogPrivate* d)
 			mapLogList.swap(d->mapLogList);
 		}
 
-		for (auto it = d->mapLogList.begin(); it != d->mapLogList.end(); it++)
+		for (auto it = mapLogList.begin(); it != mapLogList.end(); it++)
 		{
 			WriteLog(it->first, it->second);
 		}
