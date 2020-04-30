@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "IFrame.h"
+#include "Frame.h"
 
 class AbstractFinalFrame : public AbstractFrame
 {

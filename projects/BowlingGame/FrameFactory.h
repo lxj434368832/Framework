@@ -2,7 +2,7 @@
 
 #include <vector>
 
-class IFrame;
+__interface IFrame;
 
 class FrameFactory
 {

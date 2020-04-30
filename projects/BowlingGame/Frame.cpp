@@ -27,17 +27,17 @@ StrikeFrame::~StrikeFrame()
 
 unsigned StrikeFrame::FrameScore()
 {
-	return s_uPinCount + NextFrame()->GetStrikeBonus();
+	return PIN_COUNT + NextFrame()->GetStrikeBonus();
 }
 
 unsigned StrikeFrame::GetSpareBonus()
 {
-	return s_uPinCount;
+	return PIN_COUNT;
 }
 
 unsigned StrikeFrame::GetStrikeBonus()
 {
-	return s_uPinCount + NextFrame()->GetSpareBonus();
+	return PIN_COUNT + NextFrame()->GetSpareBonus();
 }
 
 
@@ -53,7 +53,7 @@ SpareFrame::~SpareFrame()
 
 unsigned SpareFrame::FrameScore()
 {
-	return s_uPinCount + NextFrame()->GetSpareBonus();
+	return PIN_COUNT + NextFrame()->GetSpareBonus();
 }
 
 unsigned SpareFrame::GetSpareBonus()
@@ -63,7 +63,7 @@ unsigned SpareFrame::GetSpareBonus()
 
 unsigned SpareFrame::GetStrikeBonus()
 {
-	return s_uPinCount;
+	return PIN_COUNT;
 }
 
 

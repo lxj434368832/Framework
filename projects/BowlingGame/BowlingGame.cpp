@@ -35,34 +35,62 @@ bool BowlingGame::CalculateScore(std::string strInput, unsigned& uScore)
 	}
 
 	std::vector<unsigned> vctKnock;
-	vctFrame.erase(vctFrame.begin(), vctFrame.begin() + 8);
+	vctFrame.erase(vctFrame.begin(), vctFrame.begin() + 9);
 	if (ParseFinalFrame(vctFrame, vctKnock))
 	{
 		vctKnocks.push_back(vctKnock);
-		return true;
 	}
 	else
 		return false;
 
+	IFrame *fm = FrameFactory::BuildFrames(vctKnocks);
+	uScore = fm->TotalScore();
+	return true;
 }
 
 std::vector<std::string> BowlingGame::SplitString(std::string strInput, char c)
 {
 	std::vector<std::string> vctFrames;
+	std::string strFrame;
 	int iCount = strInput.length();
 	for (int i = 0; i < iCount; i++)
 	{
-		std::string strFrame;
 		char ch = strInput[i];
-		if (c == ch && !strFrame.empty())
+		if (c == ch)
+		{
+			if (!strFrame.empty())
+			{
+				vctFrames.push_back(strFrame);
+				strFrame.clear();
+			}
+		}
+		else if ('X' == ch)
+		{
+			if (!strFrame.empty())
+			{
+				vctFrames.push_back(strFrame);
+				strFrame.clear();
+			}
+			
+			vctFrames.push_back("X");
+		}
+		else if (2 == strFrame.size())
 		{
 			vctFrames.push_back(strFrame);
+			strFrame = ch;
 		}
 		else
 		{
 			strFrame += ch;
 		}
+
 	}
+
+	if (!strFrame.empty())
+	{
+		vctFrames.push_back(strFrame);
+	}
+	return vctFrames;
 }
 
 bool BowlingGame::ParseNormalFrame(std::string strFrame, std::vector<unsigned> &knocks)
@@ -71,6 +99,7 @@ bool BowlingGame::ParseNormalFrame(std::string strFrame, std::vector<unsigned> &
 	if (1 == iSize && 0 == strFrame.compare("X"))
 	{
 		knocks.push_back(10);
+		return true;
 	}
 	else if (2 == iSize)
 	{
@@ -84,15 +113,15 @@ bool BowlingGame::ParseNormalFrame(std::string strFrame, std::vector<unsigned> &
 		}
 
 		if ('/' == strFrame[1])
-			uKnock2 = AbstractFrame::s_uPinCount - uKnock1;
+			uKnock2 = PIN_COUNT - uKnock1;
 		else if ('0' < strFrame[1] && strFrame[1] <= '9')
 			uKnock2 = strFrame[1] - '0';
 		else if ('-' != strFrame[1])
 		{
-			uKnock2 = 2 * AbstractFrame::s_uPinCount;
+			uKnock2 = 2 * PIN_COUNT;
 		}
 
-		if (uKnock1 + uKnock2 > AbstractFrame::s_uPinCount)
+		if (uKnock1 + uKnock2 > PIN_COUNT)
 		{
 			std::cerr << "输入的字符：" << strFrame << "无效！" << std::endl;
 			return false;
@@ -101,6 +130,7 @@ bool BowlingGame::ParseNormalFrame(std::string strFrame, std::vector<unsigned> &
 		{
 			knocks.push_back(uKnock1);
 			knocks.push_back(uKnock2);
+			return true;
 		}
 	}
 	else
@@ -110,28 +140,126 @@ bool BowlingGame::ParseNormalFrame(std::string strFrame, std::vector<unsigned> &
 	}
 }
 
-bool BowlingGame::ParseFinalFrame(std::vector<std::string> vctInput, std::vector<unsigned>& knocks)
+bool BowlingGame::ParseFinalFrame(std::vector<std::string> vctFrame, std::vector<unsigned>& knocks)
 {
-	int iSize = vctInput.size();
-	if (1 == iSize)
+	std::string strFrame;
+	for (int i = 0; i < vctFrame.size(); i++)
 	{
-		std::string strFrame = vctInput[0];
-		if (2 == strFrame.size())
-		{
-		}
-		else if (3 == strFrame.size())
-		{
-		}
+		strFrame += vctFrame[i];
 	}
-	else if (3 == iSize)
+
+	if (2 == strFrame.size())
 	{
-		for ()
+		return ParseFinalMissFrame(strFrame, knocks);
+	}
+	else if (3 == strFrame.size())
+	{
+		if ('/' == strFrame[1])
 		{
+			return ParseFinalSpareFrame(strFrame, knocks);
+		}
+		else
+		{
+			return ParseFinalStrikeFrame(strFrame, knocks);
 		}
 	}
 	else
 	{
-		std::cerr << "帧次错误，请确定输入。" << std::endl;
+		std::cerr << "最后帧输入错误，请检查！" << std::endl;
 		return false;
 	}
+}
+
+bool BowlingGame::ParseFinalMissFrame(std::string strFrame, std::vector<unsigned> &knocks)
+{
+	for (int i = 0; i < 2; i++)
+	{
+		if ('-' == strFrame[i])
+		{
+			knocks.push_back(0);
+		}
+		else if ('0' < strFrame[i] && strFrame[i] <= '9')
+		{
+			knocks.push_back(strFrame[i] - '0');
+		}
+		else
+		{
+			std::cerr << "最后帧输入错误，请检查！" << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+bool BowlingGame::ParseFinalSpareFrame(std::string strFrame, std::vector<unsigned> &knocks)
+{
+	if ('-' == strFrame[0])
+	{
+		knocks.push_back(0);
+	}
+	else if ('0' < strFrame[0] && strFrame[0] <= '9')
+	{
+		knocks.push_back(strFrame[0] - '0');
+	}
+	else
+	{
+		std::cerr << "最后帧输入错误，请检查！" << std::endl;
+		return false;
+	}
+
+	knocks.push_back(PIN_COUNT - knocks[0]);
+
+	if ('-' == strFrame[2])
+	{
+		knocks.push_back(0);
+	}
+	else if ('X' == strFrame[2])
+	{
+		knocks.push_back(PIN_COUNT);
+	}
+	else if ('0' < strFrame[2] && strFrame[2] <= '9')
+	{
+		knocks.push_back(strFrame[2] - '0');
+	}
+	else
+	{
+		std::cerr << "最后帧输入错误，请检查！" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+bool BowlingGame::ParseFinalStrikeFrame(std::string strFrame, std::vector<unsigned> &knocks)
+{
+	if ('X' == strFrame[0])
+	{
+		knocks.push_back(PIN_COUNT);
+	}
+	else
+	{
+		std::cerr << "最后帧输入错误，请检查！" << std::endl;
+		return false;
+	}
+
+	for (int i = 1; i < 3; i++)
+	{
+		if ('-' == strFrame[i])
+		{
+			knocks.push_back(0);
+		}
+		else if ('X' == strFrame[i])
+		{
+			knocks.push_back(PIN_COUNT);
+		}
+		else if ('0' < strFrame[i] && strFrame[i] <= '9')
+		{
+			knocks.push_back(strFrame[i] - '0');
+		}
+		else
+		{
+			std::cerr << "最后帧输入错误，请检查！" << std::endl;
+			return false;
+		}
+	}
+	return true;
 }

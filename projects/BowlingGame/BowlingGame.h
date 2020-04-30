@@ -16,7 +16,13 @@ private:
 
 	bool ParseNormalFrame(std::string strFrame, std::vector<unsigned> &knocks);
 
-	bool ParseFinalFrame(std::vector<std::string> vctInput, std::vector<unsigned>& knocks);
+	bool ParseFinalFrame(std::vector<std::string> vctFrame, std::vector<unsigned>& knocks);
+
+	bool ParseFinalSpareFrame(std::string strFrame, std::vector<unsigned> &knocks);
+
+	bool ParseFinalMissFrame(std::string strFrame, std::vector<unsigned> &knocks);
+
+	bool ParseFinalStrikeFrame(std::string strFrame, std::vector<unsigned> &knocks);
 
 };
 

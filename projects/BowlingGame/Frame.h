@@ -12,8 +12,6 @@ public:
 
 	void SetNextFrame(IFrame *fm) override;
 
-	static const unsigned	s_uPinCount = 10;
-
 protected:
 	IFrame			*m_pNext = nullptr;
 };

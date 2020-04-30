@@ -5,15 +5,19 @@
 
 #include <iostream>
 
-int _tmain(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	BowlingGame bg;
 
 	while (true)
 	{
-		printf("请输入一行保龄球滚动序列， -q退出程序。");
+		printf("\n\n请输入一行保龄球滚动序列， -q退出程序。\n");
 		std::string strInput;
 		getline(std::cin, strInput);
+
+		if (0 == strInput.compare("-q"))
+			break;
+
 		unsigned uScore;
 		if (bg.CalculateScore(strInput, uScore))
 		{

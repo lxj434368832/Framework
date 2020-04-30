@@ -10,12 +10,13 @@ AbstractFinalFrame::AbstractFinalFrame(std::vector<unsigned> hits)
 
 unsigned AbstractFinalFrame::TotalScore()
 {
-	FrameScore();
+	return FrameScore();
 }
 
 IFrame* AbstractFinalFrame::NextFrame()
 {
 	std::cerr << "当前帧为最后一个。";
+	return nullptr;
 }
 
 
@@ -32,17 +33,17 @@ FinalStrikeFrame ::~FinalStrikeFrame()
 
 unsigned FinalStrikeFrame::FrameScore()
 {
-	return s_uPinCount + m_vctHits[1] + m_vctHits[2];
+	return PIN_COUNT + m_vctHits[1] + m_vctHits[2];
 }
 
 unsigned FinalStrikeFrame::GetSpareBonus()
 {
-	return s_uPinCount;
+	return PIN_COUNT;
 }
 
 unsigned FinalStrikeFrame::GetStrikeBonus()
 {
-	return s_uPinCount + m_vctHits[1];
+	return PIN_COUNT + m_vctHits[1];
 }
 
 
@@ -55,7 +56,7 @@ FinalSpareFrame::FinalSpareFrame(std::vector<unsigned> hits)
 
 unsigned FinalSpareFrame::FrameScore()
 {
-	return s_uPinCount + m_vctHits[2];
+	return PIN_COUNT + m_vctHits[2];
 }
 
 unsigned FinalSpareFrame::GetSpareBonus()
@@ -65,7 +66,7 @@ unsigned FinalSpareFrame::GetSpareBonus()
 
 unsigned FinalSpareFrame::GetStrikeBonus()
 {
-	return s_uPinCount;
+	return PIN_COUNT;
 }
 
 
