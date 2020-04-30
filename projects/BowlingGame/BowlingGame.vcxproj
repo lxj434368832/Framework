@@ -79,10 +79,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BowlingGame.cpp" />
+    <ClCompile Include="FinalFrame.cpp" />
+    <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="FrameFactory.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BowlingGame.h" />
+    <ClInclude Include="FinalFrame.h" />
+    <ClInclude Include="Frame.h" />
+    <ClInclude Include="FrameFactory.h" />
     <ClInclude Include="IBowlingGame.h" />
     <ClInclude Include="IFrame.h" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-class IFrame
+__interface IFrame
 {
 public:
 	//当前frame以及之后的总分
@@ -17,8 +17,6 @@ public:
 
 	IFrame*	NextFrame();
 
-	void SetNextFrame(IFrame *frame);
+	void SetNextFrame(IFrame *fm);
 
-protected:
-	const unsigned c_uBalls = 10;
 };

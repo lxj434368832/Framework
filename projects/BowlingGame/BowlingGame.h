@@ -12,13 +12,11 @@ public:
 	bool CalculateScore(std::string strInput, unsigned&	uScore);
 
 private:
-	bool SplitString(std::string strInput, char c);
-	bool SplitTheTurns(std::string strInput);
-	bool ValidateInput(std::string strInput);
-	bool ValidateTurn(std::string strTurn);
+	std::vector<std::string> SplitString(std::string strInput, char c);
 
+	bool ParseNormalFrame(std::string strFrame, std::vector<unsigned> &knocks);
 
-private:				
-	std::vector<std::string> m_vctTurns;
+	bool ParseFinalFrame(std::vector<std::string> vctInput, std::vector<unsigned>& knocks);
+
 };
 

@@ -17,6 +17,15 @@
     <ClCompile Include="BowlingGame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FinalFrame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BowlingGame.h">
@@ -26,6 +35,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="IFrame.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FinalFrame.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
