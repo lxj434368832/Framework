@@ -1,7 +1,10 @@
 #include <vld.h>
 #include <iostream>
 #include <tchar.h>
-#include "LogTest.h"
+//#include "LogTest.h"
+//#include "..\..\include\LogFile.h"
+#include "HightQualityTimer.h"
+#include "CELLTimestamp.h"
 
 #ifdef _DEBUG
 #pragma comment(lib,"../../lib/Frameworkd.lib")
@@ -13,8 +16,7 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//LogFile log;
-
-	TestLibLog();
+	TestHightQualityTimer();
 	system("pause");
 	return 0;
 }

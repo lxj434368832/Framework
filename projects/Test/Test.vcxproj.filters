@@ -25,5 +25,11 @@
     <ClInclude Include="CharactorTransport.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="HightQualityTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CELLTimestamp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
