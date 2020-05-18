@@ -31,5 +31,8 @@
     <ClInclude Include="CELLTimestamp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LineArcInter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

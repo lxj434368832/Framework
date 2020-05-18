@@ -35,4 +35,6 @@ friend class Class;
 	inline Class##Data* d_func() { return reinterpret_cast<Class##Data *>(d); } \
 	inline const Class##Data* d_func() const { return reinterpret_cast<const Class##Data *>(d); }
 
-//#define M_D(Class) Class##Data* const d = d_func()
+#define M_D(Class) Class##Data* const d = d_func()
+
+#define LIB_NAME "Framework"

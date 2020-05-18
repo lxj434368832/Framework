@@ -88,6 +88,7 @@
     <ClInclude Include="CELLTimestamp.h" />
     <ClInclude Include="CharactorTransport.h" />
     <ClInclude Include="HightQualityTimer.h" />
+    <ClInclude Include="LineArcInter.h" />
     <ClInclude Include="LogTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

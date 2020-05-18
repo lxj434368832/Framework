@@ -20,10 +20,10 @@ struct SLogPrivate
 	std::string				strAppDir;
 	DWORD					dwTickCount;
 	std::thread				*pThread;
-	std::map<std::string, std::string> mapFilePath;	//libName对应的文件路径
-	std::map<std::string, LogList>	mapLogList;
-	std::mutex				mutexLogList;
-	std::condition_variable	cvConsumer;
+	std::map<std::string, std::string>	mapFilePath;	//libName对应的文件路径
+	std::map<std::string, LogList>		mapLogList;
+	std::mutex							mutexLogList;
+	std::condition_variable				cvConsumer;
 
 	int						m_iDayOfYear;
 
@@ -56,9 +56,13 @@ SLogPrivate::~SLogPrivate()
 	::OutputDebugString("准备退出日志线程！\n");
 	cvConsumer.notify_all();
 	if (pThread->joinable())
-		pThread->detach();
-	::OutputDebugString("成功退出日志线程！\n");
+	{
+		pThread->join();
+	}
+	//pThread->detach();
 	delete pThread;
+	pThread = nullptr;
+	::OutputDebugString("成功退出日志线程！\n");
 }
 
 std::string GetAppDir()
@@ -105,6 +109,11 @@ void LOG(const char * szLibName, const char* format, ...)
 	AddLog(szLibName, strLog);
 }
 
+void DeleteLibLog()
+{
+	s_d.reset();
+}
+
 void AddLog(const char* szLibName, const std::string& strLog)
 {
 	s_d->mutexLogList.lock();
@@ -135,7 +144,7 @@ void WriteLogThread(SLogPrivate* d)
 		}
 	}
 
-	::OutputDebugString("日志线程已经退出！\n");
+	//::OutputDebugString("日志线程已经退出！\n");
 }
 
 void WriteLog(std::string strLibName, LogList& list)

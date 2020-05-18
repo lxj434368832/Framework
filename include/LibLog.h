@@ -17,6 +17,8 @@
 //写日志函数
 void LOG(const char * szLibName, const char* format, ...);
 
+void DeleteLibLog();
+
 #define LOGM(format, ...)  do{  \
 	char szFunInfo[256];	\
 	sprintf_s(szFunInfo,"[%s:%d]<Info> %s\n",__FUNCTION__,__LINE__, format);  \

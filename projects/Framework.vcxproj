@@ -95,6 +95,7 @@
     <ClInclude Include="..\include\LogFile.h" />
     <ClInclude Include="..\include\MLock.h" />
     <ClInclude Include="..\include\MTimer.h" />
+    <ClInclude Include="..\include\PerformanceTimer.h" />
     <ClInclude Include="..\include\ProcessHandle.h" />
     <ClInclude Include="..\include\ResourceManage.h" />
     <ClInclude Include="..\include\Utils.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="..\source\LogFile.cpp" />
     <ClCompile Include="..\source\MLock.cpp" />
     <ClCompile Include="..\source\MTimer.cpp" />
+    <ClCompile Include="..\source\PerformanceTimer.cpp" />
     <ClCompile Include="..\source\ProcessHandle.cpp" />
     <ClCompile Include="..\source\Utils.cpp" />
   </ItemGroup>
