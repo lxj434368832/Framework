@@ -201,7 +201,7 @@ void CheckFilePath(std::string strLibName)
 			for (auto itValue : s_d->mapFilePath)
 			{
 				strLibName = itValue.first;
-				sprintf_s(szLogPath, MAX_PATH, "%s%s\\%s%04d%02d%02d%2d%2d%2d.log",
+				sprintf_s(szLogPath, MAX_PATH, "%s%s\\%s%04d%02d%02d%02d%02d%02d.log",
 					s_d->strAppDir.data(), strLibName.data(), strLibName.data(),
 					sNow.tm_year + 1900, sNow.tm_mon + 1, sNow.tm_mday,
 					sNow.tm_hour, sNow.tm_min, sNow.tm_sec);
@@ -211,7 +211,7 @@ void CheckFilePath(std::string strLibName)
 	}
 	else		//生成单个lib的文件路径
 	{
-		sprintf_s(szLogPath, MAX_PATH, "%s%s\\%s%04d%02d%02d%2d%2d%2d.log",
+		sprintf_s(szLogPath, MAX_PATH, "%s%s\\%s%04d%02d%02d%02d%02d%02d.log",
 			s_d->strAppDir.data(), strLibName.data(), strLibName.data(),
 			sNow.tm_year + 1900, sNow.tm_mon + 1, sNow.tm_mday,
 			sNow.tm_hour, sNow.tm_min, sNow.tm_sec);

@@ -33,7 +33,7 @@ typedef struct Arc_Inter
 
 //函数函数名：Line_point_by_point_comparison_Interpolation的测试的数据
 //Line_Inter_Struct lineStructTest = { 0, 0, -6, -4, 1 };
-Line_Inter_Struct lineStructTest = { 1, 2, 7, 9, 1 };
+Line_Inter_Struct lineStructTest = { -1908, -3138, -1895, -3139, 1 };
 Arc_Inter_Struct  arcStructTest = { 10, 0, 6, 8, 10, 1 };
 
 void Line_point_by_point_comparison_Interpolation(Line_Inter_Struct lineInterStr);

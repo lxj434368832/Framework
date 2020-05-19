@@ -7,6 +7,7 @@
 #include <map>
 #include <mutex>
 #include <condition_variable>
+#include <vector>
 
 using namespace std::chrono;
 
@@ -16,6 +17,7 @@ struct SUserData
 	PfTimerProc			fnTimer;		//定时器回调函数
 	unsigned			uExtCount;		//执行计数
 	time_point<high_resolution_clock> _begin;	//定时器开始时间点
+	std::vector<unsigned long long> vctInterval; //间隔向量
 	SUserData(unsigned uVal, PfTimerProc fn)
 	{
 		ullInterval = uVal;
@@ -60,11 +62,15 @@ unsigned PerformanceTimer::AcquireTimer(unsigned uInterval, PfTimerProc lpTimerF
 	d->mapUsers.emplace(uTimerId, SUserData(uInterval, lpTimerFunc));
 	d->mtUsers.unlock();
 	d->cvUsers.notify_one();
+
+	//mingel test
 	return uTimerId;
 }
 
 void PerformanceTimer::ReleaseTimer(unsigned uTimerId)
 {
+	std::vector<unsigned long long> vctInterval;
+
 	d->mtUsers.lock();
 	auto it = d->mapUsers.find(uTimerId);
 	if (it == d->mapUsers.end())
@@ -74,9 +80,21 @@ void PerformanceTimer::ReleaseTimer(unsigned uTimerId)
 	}
 	else
 	{
+		vctInterval = it->second.vctInterval;
 		d->mapUsers.erase(it);
 		d->mtUsers.unlock();
 	}
+
+	//mingel test
+	double dCalculate = 0;
+	int iCount = vctInterval.size();
+	for (int i = 1; i < iCount; i++)
+	{
+		unsigned long long ullInterval = vctInterval[i] - vctInterval[i - 1];
+		LOGM("第%d次的间隔时间为：%u", i, ullInterval);
+		dCalculate += ullInterval;
+	}
+	if (iCount) LOGM("本次定时间隔的平均值为：%f", dCalculate / iCount);
 }
 
 void PerformanceTimer::TimerCallback()
@@ -93,11 +111,14 @@ void PerformanceTimer::TimerCallback()
 		for (auto it = d->mapUsers.begin(); it != d->mapUsers.end(); it++)
 		{
 			SUserData &dt = it->second;
-			if (duration_cast<microseconds>(high_resolution_clock::now() - dt._begin).count() >= 
-				dt.ullInterval * dt.uExtCount)
+			unsigned long long ullCount = duration_cast<microseconds>(high_resolution_clock::now() - dt._begin).count();
+			if (ullCount >= dt.ullInterval * dt.uExtCount)
 			{
 				dt.fnTimer(it->first);	//回调时间函数
 				++dt.uExtCount;
+
+				//mingel test
+				dt.vctInterval.push_back(ullCount);
 			}
 		}
 	}
