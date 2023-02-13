@@ -12,6 +12,8 @@
 #include <sstream>
 #include <list>
 
+#define LOG_BUFFER_SIZE 512
+
 class SingleLog
 {
 public:
@@ -33,36 +35,9 @@ public:
 	}
 
 private:
-	char	m_szLineLog[512];
+	char	m_szLineLog[LOG_BUFFER_SIZE];
 	std::stringstream m_strStream;
 };
-
-class LogFileData;
-
-class LogFile
-{
-public:
-	LogFile();
-	~LogFile();
-	static LogFile* GetInstance()
-	{
-		return s_instance;
-	}
-	void AddLog(const std::string &strLog);
-
-	void Timeout(unsigned uTimerID);
-
-private:
-	void CheckFileName();
-	void WriteLogThread();
-
-	void WriteLog(std::list<std::string>& listLog);
-
-private:
-	static LogFile* s_instance;
-	LogFileData		*d;
-};
-
 
 #define Log() (SingleLog())<< "["<<__FUNCTION__<<":"<<__LINE__<< "]"
 #define logm() Log()<<"<Info> "
@@ -72,7 +47,7 @@ private:
 
 //以下调用方式的消息长度不能超过256
 #define LOGM(format, ...)  do{  SingleLog log; \
-    log.AddLog("[%s:%d]<Info> ",__FUNCTION__,__LINE__);  \
+    log.AddLog("[%s:%d]<Info> ", __FUNCTION__, __LINE__);  \
     log.AddLog(format, ##__VA_ARGS__);}while(0)
 #define LOGD(format, ...)  do{  SingleLog log; \
     log.AddLog("[%s:%d]<Debug> ",__FUNCTION__,__LINE__);  \

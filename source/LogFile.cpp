@@ -14,6 +14,33 @@
 
 #pragma comment(lib,"Winmm.lib")
 
+
+class LogFileData;
+
+class LogFile
+{
+public:
+	LogFile();
+	~LogFile();
+	static LogFile* GetInstance()
+	{
+		return s_instance;
+	}
+	void AddLog(const std::string& strLog);
+
+	void Timeout(unsigned uTimerID);
+
+private:
+	void CheckFileName();
+	void WriteLogThread();
+
+	void WriteLog(std::list<std::string>& listLog);
+
+private:
+	static LogFile* s_instance;
+	LogFileData* d;
+};
+
 SingleLog::SingleLog()
 {
 	SYSTEMTIME sysTime;
@@ -36,7 +63,7 @@ void SingleLog::AddLog(const char* format, ...)
 {
 	va_list argList;
 	va_start(argList, format);
-	vsprintf_s(m_szLineLog, format, argList);
+	vsprintf_s(m_szLineLog, LOG_BUFFER_SIZE, format, argList);
 	va_end(argList);
 
 	m_strStream << m_szLineLog;
@@ -188,7 +215,7 @@ void LogFile::WriteLogThread()
 
 void LogFile::WriteLog(std::list<std::string>& listLog)
 {
-	FILE	*pFile;
+	FILE	*pFile = nullptr;
 	errno_t err = fopen_s(&pFile, d->m_szFileName, "a");
 	if (0 != err)
 	{

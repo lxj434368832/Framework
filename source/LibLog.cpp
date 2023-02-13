@@ -10,13 +10,15 @@
 #include <windows.h>
 
 
+#define LOG_BUFFER_SIZE 8 * 1024 * 1024	//8M
+
 typedef std::list<std::string> LogList;
 
 struct SLogPrivate
 {
 	bool					bStart;
 	std::mutex				mutexBuffer;
-	char					szBuffer[LOG_BUFFER_SIZE]; 
+	char					btBuffer[LOG_BUFFER_SIZE]; 
 	std::string				strAppDir;
 	DWORD					dwTickCount;
 	std::thread				*pThread;
@@ -41,13 +43,12 @@ void WriteLog(std::string strLibName, LogList& list);
 void CheckFilePath(std::string strLibName);
 
 SLogPrivate::SLogPrivate()
+	: bStart(true)
+	, m_iDayOfYear(0)
 {
-	bStart = true;
 	strAppDir = GetAppDir();
 	dwTickCount = ::GetTickCount();
 	pThread = new std::thread(&WriteLogThread, this);
-
-	m_iDayOfYear = 0;
 }
 
 SLogPrivate::~SLogPrivate()
@@ -99,8 +100,8 @@ void LOG(const char * szLibName, const char* format, ...)
     va_start(argList, format);
 
 	s_d->mutexBuffer.lock();
-	vsprintf_s(s_d->szBuffer, format, argList);
-	strLog.append(s_d->szBuffer);
+	vsprintf_s(s_d->btBuffer, format, argList);
+	strLog.append(s_d->btBuffer);
 	s_d->mutexBuffer.unlock();
 
 	va_end(argList);
