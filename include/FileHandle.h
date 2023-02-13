@@ -7,6 +7,7 @@
 #pragma once
 #include <wtypes.h>
 #include <string>
+#include <tchar.h>
 #include <vector>
 #include <list>
 
@@ -87,6 +88,13 @@ public:
 	* param filter:		in,过滤条件
 	* return:			文件列表
 	*************************************************************************/
-	static std::list<std::string> GetAllFile(LPCTSTR lpDir,LPCTSTR filter);
-};
+	static std::list<std::string> GetAllFile(LPCTSTR lpDir,LPCTSTR filter=_T("*"));
 
+#ifdef _UNICODE
+#define tstring std::wstring
+#else
+#define tstring std::string
+#endif
+	//template<class tstring>
+	void GetDirFileList(LPCTSTR lpRootDir, std::vector<tstring>& fileArray);
+};
