@@ -26,5 +26,17 @@ namespace mqwUtils
 	bool GetMacByGetAdaptersInfo(std::string& macOUT);
 	bool GetMacByGetAdaptersAddresses(std::string& macOUT);
 #endif
-
 }
+
+#include<chrono>
+class MElapsedTimer
+{
+public:
+	MElapsedTimer();
+	void Restart();
+
+	uint64_t ElapsedMicroseconds();
+	uint64_t Elapsednanoseconds();
+private:
+	std::chrono::time_point<std::chrono::high_resolution_clock> _start;
+};
