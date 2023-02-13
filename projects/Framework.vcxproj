@@ -14,12 +14,13 @@
     <ProjectGuid>{8B01DBF9-8C04-4983-A808-3BFB0064F19B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Framework</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -87,10 +88,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\CharacterCvt.h" />
     <ClInclude Include="..\include\CharacterSet.h" />
     <ClInclude Include="..\include\CommonDefine.h" />
     <ClInclude Include="..\include\ConfigManage.h" />
+    <ClInclude Include="..\include\DebugLog.h" />
     <ClInclude Include="..\include\FileHandle.h" />
+    <ClInclude Include="..\include\FrameworkDefine.h" />
     <ClInclude Include="..\include\LibLog.h" />
     <ClInclude Include="..\include\LogFile.h" />
     <ClInclude Include="..\include\MLock.h" />
@@ -101,8 +105,10 @@
     <ClInclude Include="..\include\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\CharacterCvt.cpp" />
     <ClCompile Include="..\source\CharacterSet.cpp" />
     <ClCompile Include="..\source\ConfigManage.cpp" />
+    <ClCompile Include="..\source\DebugLog.cpp" />
     <ClCompile Include="..\source\FileHandle.cpp" />
     <ClCompile Include="..\source\LibLog.cpp" />
     <ClCompile Include="..\source\LogFile.cpp" />

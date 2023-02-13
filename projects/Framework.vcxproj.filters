@@ -29,9 +29,6 @@
     <ClInclude Include="..\include\MLock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\MTimer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\ProcessHandle.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -45,6 +42,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\PerformanceTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DebugLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CharacterCvt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\FrameworkDefine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -64,9 +73,6 @@
     <ClCompile Include="..\source\MLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\MTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\ProcessHandle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -77,6 +83,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\source\PerformanceTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\DebugLog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\CharacterCvt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\MTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
