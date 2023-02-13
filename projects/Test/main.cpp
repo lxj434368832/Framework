@@ -1,11 +1,13 @@
-#include <vld.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+//#include <vld.h>
 #include <iostream>
 #include <tchar.h>
 #include "LogTest.h"
 //#include "..\..\include\LogFile.h"
 #include "HightQualityTimer.h"
-#include "CELLTimestamp.h"
+#include "CElapsedTimer.h"
 #include "LineArcInter.h"
+#include "CharacterConvert.h"
 
 #ifdef _DEBUG
 #pragma comment(lib,"../../lib/Frameworkd.lib")
@@ -18,11 +20,13 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//LogFile log;
 	//TestHightQualityTimer();
-	TestLineInter(); 
-	TestLineInter1();
+	//TestLineInter(); 
+	//TestLineInter1();
 	//TestLineInter2();
-	system("pause");
-	DeleteLibLog();
+	//TestDebugLog();
+	//system("pause");
+	//DeleteLibLog();
+	TestCharacterConvert();
 	return 0;
 }
 

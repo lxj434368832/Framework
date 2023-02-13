@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="CRuntime">
+      <UniqueIdentifier>{2df5cdcf-0633-4667-b656-626641021f77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -22,17 +25,17 @@
     <ClInclude Include="LogTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CharactorTransport.h">
+    <ClInclude Include="CharacterConvert.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HightQualityTimer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CELLTimestamp.h">
+    <ClInclude Include="CElapsedTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LineArcInter.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CRuntime\stdargTest.h">
+      <Filter>CRuntime</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

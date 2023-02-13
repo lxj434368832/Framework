@@ -37,6 +37,14 @@ int main()
 	}
 
 	consumer_thread.join();
-
 	return 0;
+}
+
+void TestLock()
+{
+	std::recursive_mutex mtx1;
+	mtx.try_lock();
+	std::lock(mtx,mtx1);
+	std::try_lock(mtx, mtx);
+	mtx.try_lock();
 }
