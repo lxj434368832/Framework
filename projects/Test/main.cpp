@@ -4,7 +4,6 @@
 #include <tchar.h>
 #include "LogTest.h"
 //#include "..\..\include\LogFile.h"
-#include "HightQualityTimer.h"
 #include "CElapsedTimer.h"
 #include "LineArcInter.h"
 #include "CharacterConvert.h"
