@@ -8,6 +8,7 @@
 
 #include <thread>
 #include <functional>
+#include <windows.h>
 
 typedef std::function<void()> funTimerProc;
 
@@ -35,8 +36,8 @@ private:
 	void TimerCallback(unsigned uInterval, bool bStartCall);
 
 private:
-	std::thread		*m_pTimerThread = nullptr;	//定时器线程
-	HANDLE 			m_hTimerEvent = nullptr;	//定时器事件
-	funTimerProc	m_funTimerProc = nullptr;	//回调函数
+	std::thread		*m_pTimerThread = nullptr;			//定时器线程
+	HANDLE 			m_hTimerEvent = INVALID_HANDLE_VALUE;	//定时器事件
+	funTimerProc	m_funTimerProc = nullptr;			//回调函数
 };
 
