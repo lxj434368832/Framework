@@ -5,11 +5,13 @@
 
 std::wstring mqwUtils::ANSIToUnicode(const char* strANSI)
 {
+#ifdef WIN32
 	std::wstring strUnicode;
 	int iSize = MultiByteToWideChar(CP_ACP, 0, strANSI, -1, NULL, 0);
 	strUnicode.resize(iSize - 1);
 	MultiByteToWideChar(CP_ACP, 0, strANSI, -1, (LPWSTR)strUnicode.data(), iSize);
 	return strUnicode;
+#endif
 }
 
 std::string mqwUtils::UnicodeToANSI(const wchar_t* strUnicode)
