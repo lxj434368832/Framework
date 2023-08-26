@@ -88,14 +88,27 @@ struct WstringVsString {
 	std::wstring ws;
 	std::string bs;
 }const EncodeCases[] = {
-	{L"x\u0080\u00ff\u0100\u208cy", u8"x\200ÿĀ₌y"},
 	{L"金山办公", u8"金山办公"},
 	{L"데이터 선언을 수정할 때 키워드는", u8"데이터 선언을 수정할 때 키워드는"},
-	{L"データ宣言を修飾するとき", u8"データ宣言を修飾するとき"}
+	{L"データ宣言を修飾するとき", u8"データ宣言を修飾するとき"},
+#if WIN32
+	{{ 0xD840, 0xDC2A }, "\xF0\xA0\x80\xAA"}
+#else
+	{ { 0x0002002A }, "\xF0\xA0\x80\xAA"}
+#endif
 };
 
 void TestCharacterConvert1()
 {
+#ifdef WIN32
+	const std::wstring cws{ 0xD840, 0xDC2A }; //𠀪的编码
+#else __linux__
+	std::wstring cws{ 0x0002002A };
+#endif
+	const std::string str("\xF0\xA0\x80\xAA");
+
+	std::string str1 = mqwUtils::WideStringToUTF8String(cws.c_str(), cws.length());
+
 	for (auto& value : EncodeCases)
 	{
 		std::string mb = mqwUtils::WideStringToUTF8String(value.ws.c_str(), value.ws.length());

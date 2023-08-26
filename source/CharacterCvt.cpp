@@ -223,7 +223,7 @@ std::string WinAnsiToUTF8(LPCSTR lpStr, size_t szLen /*= -1*/)
 }
 #endif
 
-static int UCS4TUTF8(unsigned int ucs4, char* pDst)
+static int UCS4ToUTF8(unsigned int ucs4, char* pDst)
 {
 	int nBytes = 1;
 	if (ucs4 < 0x80)
@@ -287,7 +287,7 @@ static std::string UTF16ToUTF8(const char16_t* lpSrc, size_t szLen)
             ++i;
         }
         else break;
-        nBytes = UCS4TUTF8(ucs4, dst);
+        nBytes = UCS4ToUTF8(ucs4, dst);
         strUTF8.append(dst, nBytes);
     }
     return strUTF8;
@@ -301,13 +301,13 @@ static std::string UTF32ToUTF8(const char32_t* lpSrc, size_t szLen)
     int nBytes = 0;;
     for (size_t i = 0; i < szLen; ++i)
     {
-        nBytes = UCS4TUTF8(*lpSrc++, dst);
+        nBytes = UCS4ToUTF8(*lpSrc++, dst);
         strUTF8.append(dst, nBytes);
     }
     return strUTF8;
 }
 
-static void UCS4TUTF8_1(unsigned int ucs4, char* &pDst)
+static void UCS4ToUTF8_1(unsigned int ucs4, char* &pDst)
 {
 	int nBytes = 1;
 	if (ucs4 < 0x80)
@@ -353,10 +353,9 @@ static void UCS4TUTF8_1(unsigned int ucs4, char* &pDst)
 static std::string UTF16ToUTF8_1(const char16_t* lpSrc, size_t szLen)
 {
 	std::string strUTF8;
-	strUTF8.reserve(szLen * 3);
 	constexpr int bufCount = 512;
 	char cBuf[bufCount] = {};
-	char *pStart = &cBuf[0], * pDst = pStart;
+	char* pDst = cBuf;
 	int nBytes = 0;
 	unsigned int ucs4 = 0, w1 = 0, w2 = 0;
 	for (size_t i = 0; i < szLen; ++i)
@@ -373,44 +372,58 @@ static std::string UTF16ToUTF8_1(const char16_t* lpSrc, size_t szLen)
 			++i;
 		}
 		else break;
-		UCS4TUTF8_1(ucs4, pDst);
-		nBytes = pDst - pStart;
+		UCS4ToUTF8_1(ucs4, pDst);
+		nBytes = pDst - cBuf;
 		if (nBytes > bufCount - 7)
 		{
-			strUTF8.append(pStart, nBytes);
+			strUTF8.append(cBuf, nBytes);
+			pDst = cBuf;
 			nBytes = 0;
-			pDst = pStart;
 		}
 	}
 	if(nBytes > 0) 
-		strUTF8.append(pStart, nBytes);
+		strUTF8.append(cBuf, nBytes);
 	return strUTF8;
 }
 
 static std::string UTF32ToUTF8_1(const char32_t* lpSrc, size_t szLen)
 {
 	std::string strUTF8;
-	strUTF8.reserve(szLen * 3);
 	constexpr int bufCount = 512;
 	char cBuf[bufCount] = {};
-	char* pStart = &cBuf[0], * pDst = pStart;
+	char* pDst = cBuf;
 	int nBytes = 0;;
 	for (size_t i = 0; i < szLen; ++i)
 	{
-		UCS4TUTF8_1(*lpSrc++, pDst);
-		nBytes = pDst - pStart;
+		UCS4ToUTF8_1(*lpSrc++, pDst);
+		nBytes = pDst - cBuf;
 		if (nBytes > bufCount - 7)
 		{
-			strUTF8.append(pStart, nBytes);
+			strUTF8.append(cBuf, nBytes);
+			pDst = cBuf;
 			nBytes = 0;
-			pDst = pStart;
 		}
 	}
 	if (nBytes > 0)
-		strUTF8.append(pStart, nBytes);
+		strUTF8.append(cBuf, nBytes);
 	return strUTF8;
 }
 
+static std::string UTF32ToUTF8_origin(const char32_t* lpSrc, size_t szLen)
+{
+	std::string strUTF8;
+	strUTF8.resize(szLen * 3);
+	char* pDst = &strUTF8[0];
+	for (size_t i = 0; i < szLen; ++i)
+	{
+		UCS4ToUTF8_1(*lpSrc++, pDst);
+	}
+
+	size_t m = pDst - strUTF8.c_str();
+	if (m != szLen * 3)
+		strUTF8.resize(m);
+	return strUTF8;
+}
 
 /*platform判断
 #ifdef _WIN32
