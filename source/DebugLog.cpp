@@ -148,7 +148,7 @@ void LOG(LPCWSTR lpFun, int nLine, LPCWSTR lpLevel, LPCWSTR format, ...)
 
 	strLog.append(L"\n");
 	//5、将日志信息添加到队列中
-	//AddLog(strLog);
+	AddLog(strLog);
 }
 
 void DeleteLibLog()
