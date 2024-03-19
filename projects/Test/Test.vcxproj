@@ -14,7 +14,6 @@
     <ProjectGuid>{7B833D8C-F114-499C-8B01-0EEBF84ED1EB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -86,9 +85,9 @@
     <ClCompile Include="TextToSpeak.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CElapsedTimer.h" />
-    <ClInclude Include="CharacterConvert.h" />
-    <ClInclude Include="CRuntime\stdargTest.h" />
+    <ClInclude Include="CELLTimestamp.h" />
+    <ClInclude Include="CharactorTransport.h" />
+    <ClInclude Include="HightQualityTimer.h" />
     <ClInclude Include="LineArcInter.h" />
     <ClInclude Include="LogTest.h" />
   </ItemGroup>
